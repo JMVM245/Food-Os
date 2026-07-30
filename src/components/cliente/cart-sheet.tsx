@@ -77,11 +77,6 @@ export function CartSheet() {
 
   const zona = tipoEntrega === "delivery" ? asiento.tribuna : null;
 
-  const horasDisponibles = HORAS_DEL_DIA.filter((h) => {
-    if (!zona) return true;
-    return disponibleEnFranja(h, zona) > 0;
-  });
-
   function handlePagar() {
     setError(null);
     if (tipoEntrega === "delivery" && !asientoCompleto) {

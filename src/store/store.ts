@@ -8,9 +8,7 @@ import {
   VENDEDORES_DEMO,
   PUNTOS_RECOLECCION_INICIALES,
   COMBOS_INICIALES,
-  TIENDAS,
   type Producto,
-  type Combo,
   type Zona,
   type Tienda,
   type PuntoRecoleccion,
@@ -352,7 +350,7 @@ export const useStore = create<StoreState>()(
           }
         }
 
-        const items = itemsConCombo.map(({ comboId: _, ...rest }) => rest);
+        const items = itemsConCombo.map(({ comboId, ...rest }) => { void comboId; return rest; });
         const total = items.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
         const vendedor = VENDEDORES_DEMO[zona];
         const tiempoEstimadoMin = tipoEntrega === "pickup" ? 5 + Math.floor(Math.random() * 5) : 8 + Math.floor(Math.random() * 8);
@@ -557,7 +555,7 @@ export const useStore = create<StoreState>()(
       name: "fifa-delivery-storage",
       version: 1,
       migrate: (persistedState: unknown, version: number) => {
-        if (version === 0) return { ...persistedState as any, productos: PRODUCTOS_INICIALES, materiasPrimas: MATERIAS_PRIMAS_INICIALES, pedidos: [], carrito: [] };
+        if (version === 0) return { ...persistedState as Record<string, unknown>, productos: PRODUCTOS_INICIALES, materiasPrimas: MATERIAS_PRIMAS_INICIALES, pedidos: [], carrito: [] } as unknown as StoreState;
         return persistedState as StoreState;
       },
     }

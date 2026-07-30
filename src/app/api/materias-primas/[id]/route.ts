@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 const TIENDAS = ["Norte", "Sur", "Oriental", "Occidental"] as const;
 
 function tiendaTable(tienda: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const map: Record<string, any> = {
     Norte: prisma.materias_primas_norte,
     Sur: prisma.materias_primas_sur,

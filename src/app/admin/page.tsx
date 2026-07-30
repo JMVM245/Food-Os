@@ -30,7 +30,6 @@ import {
   Square,
   Coffee,
   Clock,
-  Users,
 } from "lucide-react";
 import "./admin.css";
 
@@ -719,7 +718,6 @@ export default function AdminPage() {
                     <TableCell className="font-mono text-sm font-bold">{h}</TableCell>
                     {ZONAS.map((z) => {
                       const ocup = franjasOcupadas[h]?.[z] ?? 0;
-                      const disp = MAX_PEDIDOS_POR_FRANJA - ocup;
                       const llena = ocup >= MAX_PEDIDOS_POR_FRANJA;
                       return (
                         <TableCell key={z}>

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 function tiendaTable(tienda: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const map: Record<string, any> = {
     Norte: prisma.materias_primas_norte,
     Sur: prisma.materias_primas_sur,
@@ -26,8 +27,8 @@ export async function GET() {
       const existente = mapa.get(m.nombre);
       const stockKey = `stock_${tienda.toLowerCase()}` as const;
       if (existente) {
-        (existente as any)[stockKey] = Number(m.stock_disponible);
-        (existente as any).stock_disponible = ((existente as any).stock_disponible ?? 0) + Number(m.stock_disponible);
+        existente[stockKey] = Number(m.stock_disponible);
+        existente.stock_disponible = (existente.stock_disponible as number ?? 0) + Number(m.stock_disponible);
       } else {
         const entry: Record<string, unknown> = {
           id_materia_prima: m.id_materia_prima,

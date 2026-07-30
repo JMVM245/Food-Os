@@ -326,6 +326,7 @@ function PaymentQRModal({
         (err, url) => { if (!err) setQrDataUrl(url); }
       );
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const color = TIENDA_COLORS[tienda];

@@ -164,7 +164,7 @@ export default function ClientePage() {
         <TabsContent value={categoria}>
           <div className="cliente-productos-grid">
             {filtrados.map((producto) => (
-              <ProductCard key={producto.id} producto={producto} zona={tipoEntrega === "delivery" ? asiento.tribuna : (tiendaActiva as any)} esTienda={tipoEntrega === "pickup"} />
+              <ProductCard key={producto.id} producto={producto} zona={tipoEntrega === "delivery" ? asiento.tribuna! : tiendaActiva!} esTienda={tipoEntrega === "pickup"} />
             ))}
           </div>
         </TabsContent>
