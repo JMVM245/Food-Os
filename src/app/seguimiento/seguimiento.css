@@ -1,0 +1,125 @@
+.seguimiento-main {
+  @apply container px-4 py-6 mx-auto;
+  max-width: 32rem;
+}
+
+@media (min-width: 768px) {
+  .seguimiento-main {
+    max-width: 36rem;
+    padding-top: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .seguimiento-main {
+    max-width: 40rem;
+    padding-top: 4rem;
+  }
+}
+
+.seguimiento-back {
+  @apply mb-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground;
+}
+
+.seguimiento-card {
+  @apply overflow-hidden border-accent/30;
+}
+
+.seguimiento-header {
+  @apply border-b border-border px-5 py-6 text-center;
+}
+
+.seguimiento-ticket {
+  @apply font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground;
+}
+
+.seguimiento-status {
+  @apply mt-2 flex flex-col items-center gap-2;
+}
+
+.seguimiento-status-icon {
+  @apply h-10 w-10;
+}
+
+.seguimiento-status-text {
+  @apply font-display text-2xl font-black uppercase;
+}
+
+@media (max-width: 480px) {
+  .seguimiento-status-text {
+    @apply text-xl;
+  }
+}
+
+.seguimiento-body {
+  @apply space-y-5 p-5;
+}
+
+.seguimiento-vendedor {
+  @apply flex items-center justify-between gap-3;
+}
+
+.seguimiento-vendedor-label {
+  @apply text-xs uppercase tracking-wide text-muted-foreground;
+}
+
+.seguimiento-vendedor-name {
+  @apply font-display text-lg font-bold truncate;
+}
+
+.seguimiento-vendedor-code {
+  @apply font-mono text-accent;
+}
+
+.seguimiento-progress {
+  @apply mb-1.5 flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground;
+}
+
+.seguimiento-progress-time {
+  @apply font-mono text-foreground whitespace-nowrap;
+}
+
+.seguimiento-direccion-label {
+  @apply mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground;
+}
+
+.seguimiento-direccion {
+  @apply font-mono text-sm text-gold break-words;
+}
+
+.seguimiento-items {
+  @apply space-y-2;
+}
+
+.seguimiento-item {
+  @apply flex items-center justify-between gap-2 text-sm;
+}
+
+.seguimiento-item-price {
+  @apply font-mono text-muted-foreground whitespace-nowrap;
+}
+
+.seguimiento-total {
+  @apply flex items-center justify-between font-display text-lg font-bold uppercase;
+}
+
+.seguimiento-total-label {
+  @apply text-sm text-muted-foreground;
+}
+
+.seguimiento-total-value {
+  @apply text-gold;
+}
+
+.seguimiento-not-found {
+  @apply container flex max-w-lg flex-col items-center gap-4 px-4 py-20 text-center;
+  margin: 0 auto;
+}
+
+.seguimiento-not-found-title {
+  @apply font-display text-xl font-bold uppercase;
+}
+
+.seguimiento-not-found-desc {
+  @apply text-sm text-muted-foreground;
+}

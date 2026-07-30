@@ -1,0 +1,76 @@
+.ingreso-card {
+  @apply border-accent/20;
+}
+
+.ingreso-header {
+  @apply pb-3;
+}
+
+.ingreso-title {
+  @apply flex items-center gap-2 text-base;
+}
+
+.ingreso-desc {
+  @apply text-xs text-muted-foreground;
+}
+
+.ingreso-content {
+  @apply space-y-4;
+}
+
+.ingreso-status {
+  @apply flex items-center justify-between;
+}
+
+.ingreso-status-info {
+  @apply flex items-center gap-2;
+}
+
+.ingreso-status-label {
+  @apply text-sm text-muted-foreground;
+}
+
+.ingreso-tiempo {
+  @apply flex items-center gap-1.5;
+}
+
+.ingreso-tiempo-text {
+  @apply font-mono text-sm text-muted-foreground;
+}
+
+.ingreso-actions {
+}
+
+.ingreso-btn {
+  @apply w-full;
+}
+
+.ingreso-btn-salida {
+}
+
+.ingreso-historial {
+  @apply space-y-2 rounded-md bg-secondary/50 p-3;
+}
+
+.ingreso-historial-header {
+  @apply flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground;
+}
+
+.ingreso-historial-title {
+}
+
+.ingreso-historial-list {
+  @apply flex flex-col gap-1.5;
+}
+
+.ingreso-historial-item {
+  @apply flex items-center gap-2;
+}
+
+.ingreso-historial-badge {
+  @apply text-[10px] px-1.5 py-0;
+}
+
+.ingreso-historial-date {
+  @apply font-mono text-xs text-muted-foreground;
+}

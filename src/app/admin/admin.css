@@ -1,0 +1,59 @@
+.admin-main {
+  @apply container max-w-5xl py-6;
+}
+
+.admin-header {
+  @apply mb-6 flex flex-wrap items-center justify-between gap-3;
+}
+
+.admin-badge {
+  @apply font-mono text-xs uppercase tracking-[0.2em] text-accent;
+}
+
+.admin-title {
+  @apply font-display text-2xl font-black uppercase;
+}
+
+.admin-kpi-grid {
+  @apply mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3;
+}
+
+.admin-kpi-icon {
+  @apply grid h-11 w-11 place-items-center rounded-md;
+}
+
+.admin-kpi-number {
+  @apply font-display text-2xl font-black;
+}
+
+.admin-kpi-label {
+  @apply text-xs uppercase tracking-wide text-muted-foreground;
+}
+
+.admin-kpi-card {
+  @apply flex items-center gap-3 p-4;
+}
+
+.admin-alertas {
+  @apply mb-6 flex flex-col gap-2;
+}
+
+.admin-grid {
+  @apply grid grid-cols-1 gap-6 lg:grid-cols-5;
+}
+
+.admin-inventario {
+  @apply lg:col-span-3;
+}
+
+.admin-grafica {
+  @apply lg:col-span-2;
+}
+
+.admin-chart-empty {
+  @apply py-10 text-center text-sm text-muted-foreground;
+}
+
+.admin-chart-container {
+  @apply h-64 w-full;
+}

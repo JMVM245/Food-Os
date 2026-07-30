@@ -1,0 +1,39 @@
+.cliente-main {
+  @apply container max-w-3xl py-6;
+}
+
+.cliente-pedido-activo {
+  @apply mb-6 flex items-center gap-3 rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 transition-colors hover:bg-accent/10;
+}
+
+.cliente-pedido-entregado {
+  @apply border-pitch-bright/30 bg-pitch-bright/5 hover:bg-pitch-bright/10;
+}
+
+.cliente-header {
+  @apply mb-6 flex items-start justify-between gap-4;
+}
+
+.cliente-badge {
+  @apply font-mono text-xs uppercase tracking-[0.2em] text-accent;
+}
+
+.cliente-title {
+  @apply font-display text-2xl font-black uppercase tracking-tight sm:text-3xl;
+}
+
+.cliente-title-accent {
+  @apply text-pitch-bright;
+}
+
+.cliente-title-gold {
+  @apply text-accent;
+}
+
+.cliente-productos-grid {
+  @apply grid grid-cols-2 gap-3 sm:grid-cols-3;
+}
+
+.cliente-seat-section {
+  @apply mb-6;
+}

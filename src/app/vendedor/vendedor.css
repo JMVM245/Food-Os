@@ -1,0 +1,119 @@
+.vendedor-login-main {
+  @apply container flex min-h-[80vh] max-w-md flex-col justify-center py-10;
+}
+
+.vendedor-login-header {
+  @apply mb-6 text-center;
+}
+
+.vendedor-login-badge {
+  @apply font-mono text-xs uppercase tracking-[0.2em] text-accent;
+}
+
+.vendedor-login-title {
+  @apply font-display text-2xl font-black uppercase;
+}
+
+.vendedor-login-desc {
+  @apply mt-1 text-sm text-muted-foreground;
+}
+
+.vendedor-login-list {
+  @apply flex flex-col gap-3;
+}
+
+.vendedor-login-btn {
+  @apply flex items-center justify-between rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-accent hover:bg-secondary;
+}
+
+.vendedor-login-icon {
+  @apply grid h-10 w-10 place-items-center rounded-md bg-secondary text-pitch-bright;
+}
+
+.vendedor-login-zona {
+  @apply font-display text-base font-bold uppercase;
+}
+
+.vendedor-login-vendedor {
+  @apply font-mono text-xs text-muted-foreground;
+}
+
+.vendedor-list-main {
+  @apply container max-w-2xl py-6;
+}
+
+.vendedor-list-header {
+  @apply mb-6 flex items-center justify-between;
+}
+
+.vendedor-list-info {
+  @apply font-mono text-xs uppercase tracking-[0.2em] text-accent;
+}
+
+.vendedor-list-title {
+  @apply font-display text-2xl font-black uppercase;
+}
+
+.vendedor-kpi-grid {
+  @apply mb-5 grid grid-cols-2 gap-3;
+}
+
+.vendedor-kpi-card {
+  @apply flex items-center gap-3 p-4;
+}
+
+.vendedor-kpi-number {
+  @apply font-display text-xl font-black;
+}
+
+.vendedor-kpi-label {
+  @apply text-xs uppercase text-muted-foreground;
+}
+
+.vendedor-empty {
+  @apply flex flex-col items-center gap-2 rounded-lg border border-dashed border-border py-16 text-center text-muted-foreground;
+}
+
+.vendedor-empty-icon {
+  @apply h-10 w-10 opacity-30;
+}
+
+.vendedor-empty-text {
+  @apply text-sm;
+}
+
+.vendedor-pedidos-list {
+  @apply flex flex-col gap-3;
+}
+
+.vendedor-card-header {
+  @apply flex-row items-center justify-between space-y-0 pb-2;
+}
+
+.vendedor-card-title {
+  @apply flex items-center gap-2 text-sm;
+}
+
+.vendedor-card-location {
+  @apply h-4 w-4 text-accent;
+}
+
+.vendedor-card-total {
+  @apply font-display font-bold uppercase text-gold;
+}
+
+.vendedor-separator {
+  @apply my-2;
+}
+
+.vendedor-card-items {
+  @apply space-y-1;
+}
+
+.vendedor-card-item {
+  @apply flex items-center justify-between text-sm;
+}
+
+.vendedor-card-footer {
+  @apply flex items-center justify-between;
+}

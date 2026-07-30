@@ -1,0 +1,38 @@
+.product-card {
+  @apply transition-transform hover:-translate-y-0.5;
+}
+
+.product-card-agotado {
+  @apply opacity-60;
+}
+
+.product-card-content {
+  @apply flex flex-col gap-3 p-4;
+}
+
+.product-card-top {
+  @apply flex items-start justify-between;
+}
+
+.product-card-emoji {
+  @apply grid h-14 w-14 place-items-center rounded-lg bg-secondary text-3xl;
+}
+
+.product-card-info {
+}
+
+.product-card-name {
+  @apply font-display text-base font-bold uppercase leading-tight tracking-wide;
+}
+
+.product-card-price {
+  @apply font-mono text-sm text-gold;
+}
+
+.product-card-cart-actions {
+  @apply flex items-center justify-between rounded-md bg-secondary p-1;
+}
+
+.product-card-cart-qty {
+  @apply font-mono text-sm font-bold;
+}

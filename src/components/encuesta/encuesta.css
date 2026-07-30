@@ -1,0 +1,75 @@
+.encuesta-card {
+  @apply border-accent/20;
+}
+
+.encuesta-card-success {
+  @apply border-pitch-bright/30;
+}
+
+.encuesta-title {
+  @apply flex items-center gap-2;
+}
+
+.encuesta-desc {
+  @apply text-xs text-muted-foreground;
+}
+
+.encuesta-content {
+  @apply space-y-4;
+}
+
+.encuesta-field {
+  @apply space-y-2;
+}
+
+.encuesta-label {
+  @apply text-sm font-medium;
+}
+
+.encuesta-stars {
+  @apply flex gap-1;
+}
+
+.encuesta-star {
+  @apply transition-colors;
+}
+
+.encuesta-star:hover {
+  @apply scale-110;
+}
+
+.encuesta-star-active {
+  @apply text-accent;
+}
+
+.encuesta-star-inactive {
+  @apply text-muted;
+}
+
+.encuesta-textarea {
+  @apply min-h-[80px];
+}
+
+.encuesta-footer {
+  @apply flex justify-end;
+}
+
+.encuesta-btn {
+  @apply w-full;
+}
+
+.encuesta-success-content {
+  @apply flex flex-col items-center gap-3 py-8 text-center;
+}
+
+.encuesta-success-icon {
+  @apply h-12 w-12 text-pitch-bright;
+}
+
+.encuesta-success-title {
+  @apply font-display text-lg font-bold uppercase;
+}
+
+.encuesta-success-desc {
+  @apply text-sm text-muted-foreground;
+}

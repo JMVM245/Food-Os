@@ -1,0 +1,75 @@
+.cart-trigger {
+  @apply relative;
+}
+
+.cart-badge {
+  @apply absolute -right-2 -top-2 grid h-5 w-5 place-items-center rounded-full bg-accent text-[11px] font-bold text-accent-foreground;
+}
+
+.cart-sheet-title {
+  @apply flex items-center gap-2;
+}
+
+.cart-sheet-icon {
+  @apply h-5 w-5 text-accent;
+}
+
+.cart-empty {
+  @apply flex h-full flex-col items-center justify-center gap-2 py-16 text-center text-muted-foreground;
+}
+
+.cart-empty-icon {
+  @apply h-10 w-10 opacity-30;
+}
+
+.cart-empty-text {
+  @apply text-sm;
+}
+
+.cart-items {
+  @apply flex flex-col gap-3 py-2;
+}
+
+.cart-item {
+  @apply flex items-center gap-3 rounded-md border border-border p-2.5;
+}
+
+.cart-item-emoji {
+  @apply grid h-11 w-11 shrink-0 place-items-center rounded-md bg-secondary text-xl;
+}
+
+.cart-item-info {
+  @apply min-w-0 flex-1;
+}
+
+.cart-item-name {
+  @apply truncate text-sm font-semibold;
+}
+
+.cart-item-price {
+  @apply font-mono text-xs text-gold;
+}
+
+.cart-item-actions {
+  @apply flex items-center gap-1.5;
+}
+
+.cart-item-qty {
+  @apply w-4 text-center font-mono text-sm;
+}
+
+.cart-error {
+  @apply rounded-md bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive;
+}
+
+.cart-total {
+  @apply flex items-center justify-between font-display text-lg font-bold uppercase;
+}
+
+.cart-total-label {
+  @apply text-sm text-muted-foreground;
+}
+
+.cart-total-value {
+  @apply text-gold;
+}

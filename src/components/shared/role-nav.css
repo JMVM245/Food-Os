@@ -1,0 +1,53 @@
+.role-nav {
+  @apply sticky top-0 z-40 border-b border-border backdrop-blur;
+  background-color: hsl(var(--background) / 0.95);
+  transition: transform 0.25s ease;
+}
+
+.role-nav-hidden {
+  transform: translateY(-100%);
+}
+
+.role-nav-inner {
+  @apply container flex h-14 items-center justify-between;
+}
+
+.role-nav-logo {
+  @apply flex items-center gap-2;
+}
+
+.role-nav-logo-icon {
+  @apply grid h-8 w-8 place-items-center rounded-md bg-accent text-sm font-black text-accent-foreground;
+}
+
+.role-nav-logo-text {
+  @apply font-display text-base font-bold uppercase tracking-wide;
+}
+
+.role-nav-logo-accent {
+  @apply text-accent;
+}
+
+.role-nav-links {
+  @apply flex items-center gap-1;
+}
+
+.role-nav-link {
+  @apply flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors;
+}
+
+.role-nav-link-active {
+  @apply bg-accent text-accent-foreground;
+}
+
+.role-nav-link-inactive {
+  @apply text-muted-foreground hover:bg-secondary hover:text-foreground;
+}
+
+.role-nav-link-icon {
+  @apply h-3.5 w-3.5;
+}
+
+.role-nav-link-label {
+  @apply hidden sm:inline;
+}

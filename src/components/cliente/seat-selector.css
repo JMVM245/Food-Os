@@ -1,0 +1,31 @@
+.seat-selector {
+  @apply rounded-lg border border-border bg-card p-4;
+}
+
+.seat-selector-header {
+  @apply mb-3 flex items-center gap-2 text-accent;
+}
+
+.seat-selector-icon {
+  @apply h-4 w-4;
+}
+
+.seat-selector-title {
+  @apply font-display text-sm font-bold uppercase tracking-wide;
+}
+
+.seat-selector-grid {
+  @apply grid grid-cols-3 gap-3;
+}
+
+.seat-selector-field {
+  @apply space-y-1.5;
+}
+
+.seat-selector-confirm {
+  @apply mt-3 font-mono text-xs text-muted-foreground;
+}
+
+.seat-selector-location {
+  @apply text-gold font-bold;
+}

@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model recibo {
+  id_recibo           Int                @id @default(autoincrement())
+  codigo_boleta       String             @db.VarChar(50)
+  zona_cliente        String             @db.VarChar(10)
+  fila_cliente        Int
+  silla_cliente       Int
+  productos_comprados String
+  total_compra        Int
+  estado_pedido       estado_pedido_enum @default(No_entregado)
+  fecha_compra        DateTime           @default(now()) @db.Timestamp(6)
+}
+
+model materias_primas_norte {
+  id_materia_prima    Int       @id @default(autoincrement())
+  nombre              String    @db.VarChar(100)
+  categoria           String?   @db.VarChar(50)
+  unidad_medida       String    @db.VarChar(20)
+  stock_disponible    Decimal   @default(0) @db.Decimal(12, 2)
+  stock_maximo        Decimal   @db.Decimal(12, 2)
+  umbral_alerta_pct   Decimal   @default(20.00) @db.Decimal(5, 2)
+  costo_unitario      Decimal   @db.Decimal(10, 2)
+  fecha_actualizacion DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model materias_primas_sur {
+  id_materia_prima    Int       @id @default(autoincrement())
+  nombre              String    @db.VarChar(100)
+  categoria           String?   @db.VarChar(50)
+  unidad_medida       String    @db.VarChar(20)
+  stock_disponible    Decimal   @default(0) @db.Decimal(12, 2)
+  stock_maximo        Decimal   @db.Decimal(12, 2)
+  umbral_alerta_pct   Decimal   @default(20.00) @db.Decimal(5, 2)
+  costo_unitario      Decimal   @db.Decimal(10, 2)
+  fecha_actualizacion DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model materias_primas_occidente {
+  id_materia_prima    Int       @id @default(autoincrement())
+  nombre              String    @db.VarChar(100)
+  categoria           String?   @db.VarChar(50)
+  unidad_medida       String    @db.VarChar(20)
+  stock_disponible    Decimal   @default(0) @db.Decimal(12, 2)
+  stock_maximo        Decimal   @db.Decimal(12, 2)
+  umbral_alerta_pct   Decimal   @default(20.00) @db.Decimal(5, 2)
+  costo_unitario      Decimal   @db.Decimal(10, 2)
+  fecha_actualizacion DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model materias_primas_oriente {
+  id_materia_prima    Int       @id @default(autoincrement())
+  nombre              String    @db.VarChar(100)
+  categoria           String?   @db.VarChar(50)
+  unidad_medida       String    @db.VarChar(20)
+  stock_disponible    Decimal   @default(0) @db.Decimal(12, 2)
+  stock_maximo        Decimal   @db.Decimal(12, 2)
+  umbral_alerta_pct   Decimal   @default(20.00) @db.Decimal(5, 2)
+  costo_unitario      Decimal   @db.Decimal(10, 2)
+  fecha_actualizacion DateTime? @default(now()) @db.Timestamp(6)
+}
+
+enum estado_pedido_enum {
+  No_entregado @map("No entregado")
+  En_camino    @map("En camino")
+  Entregado
+}
