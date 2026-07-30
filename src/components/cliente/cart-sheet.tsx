@@ -101,7 +101,7 @@ export function CartSheet() {
   }
 
   const opcionesEntrega: { value: TipoEntrega; label: string; icon: typeof Armchair }[] = [
-    { value: "delivery", label: "Llevar a la silla", icon: Armchair },
+    { value: "delivery", label: "En el punto más cercano a ti", icon: Armchair },
     { value: "pickup", label: "Recoger en tienda", icon: Store },
   ];
 
