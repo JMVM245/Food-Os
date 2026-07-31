@@ -94,6 +94,18 @@
   @apply flex flex-wrap items-center justify-between gap-2;
 }
 
+.tienda-card-pago {
+  @apply flex items-center gap-2 rounded-md border p-2.5 text-xs;
+}
+
+.tienda-card-pago-pagado {
+  @apply border-pitch-bright/40 bg-pitch-bright/10 text-pitch-bright;
+}
+
+.tienda-card-pago-pendiente {
+  @apply border-amber-500/40 bg-amber-500/10 text-amber-500;
+}
+
 .tienda-pos-grid {
   @apply grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4;
 }

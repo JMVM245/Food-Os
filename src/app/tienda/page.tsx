@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { formatoCOP } from "@/components/cliente/product-card";
 import {
   Store, CheckCircle2, LogOut, ShoppingCart, Plus, Minus,
-  Clock, Package, ShoppingBag, X, QrCode, ShieldCheck,
+  Clock, Package, ShoppingBag, X, QrCode, ShieldCheck, Wallet,
 } from "lucide-react";
 import "./tienda.css";
 
@@ -324,9 +324,13 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                   <span>{pedido.tipoEntrega === "pickup" ? "Recoger en tienda" : `Delivery · ${pedido.tribuna}`}</span>
                 </CardTitle>
                 <div className="flex items-center gap-2">
-                  {pedido.pagado && (
+                  {pedido.pagado ? (
                     <Badge variant="success">
                       <ShieldCheck className="h-3 w-3 mr-0.5" /> PAGADO
+                    </Badge>
+                  ) : (
+                    <Badge variant="warning">
+                      <Wallet className="h-3 w-3 mr-0.5" /> POR PAGAR
                     </Badge>
                   )}
                   <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
@@ -336,6 +340,25 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                 </div>
               </CardHeader>
               <CardContent className="space-y-3 pt-0">
+                <div className={pedido.pagado ? "tienda-card-pago tienda-card-pago-pagado" : "tienda-card-pago tienda-card-pago-pendiente"}>
+                  {pedido.pagado ? (
+                    <>
+                      <ShieldCheck className="h-4 w-4 shrink-0" />
+                      <span>
+                        <span className="block font-bold uppercase">PAGADO por anticipado</span>
+                        <span className="block text-[11px]">Ya puedes preparar el pedido.</span>
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Wallet className="h-4 w-4 shrink-0" />
+                      <span>
+                        <span className="block font-bold uppercase">Pago pendiente</span>
+                        <span className="block text-[11px]">Cobrar al cliente al entregar.</span>
+                      </span>
+                    </>
+                  )}
+                </div>
                 <div className="tienda-card-items">
                   {pedido.items.map((item, idx) => (
                     <div key={item.productoId + idx} className="tienda-card-item">
