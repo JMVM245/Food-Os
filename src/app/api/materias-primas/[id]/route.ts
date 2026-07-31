@@ -61,7 +61,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     stock_oriental: stockMap.Oriental,
     stock_occidental: stockMap.Occidental,
     stock_disponible: Object.values(stockMap).reduce((a, b) => a + b, 0),
-    stock_maximo: Number(primero.stock_maximo),
+    stock_maximo: Number(primero.stock_maximo) * TIENDAS.length,
     umbral_alerta_pct: Number(primero.umbral_alerta_pct),
     costo_unitario: Number(primero.costo_unitario),
     fecha_actualizacion: primero.fecha_actualizacion,

@@ -1,0 +1,124 @@
+.admin-recibo-overlay {
+  @apply fixed inset-0 z-[60] grid place-items-center bg-black/60 p-4;
+}
+
+.admin-recibo-modal {
+  @apply w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl;
+}
+
+.admin-recibo-header {
+  @apply flex items-start justify-between gap-3 border-b border-border p-5;
+}
+
+.admin-recibo-tag {
+  @apply text-[10px] font-bold uppercase tracking-[0.2em] text-accent;
+}
+
+.admin-recibo-title {
+  @apply font-display text-xl font-black uppercase;
+}
+
+.admin-recibo-close {
+  @apply grid h-8 w-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground;
+}
+
+.admin-recibo-body {
+  @apply p-5;
+}
+
+.admin-recibo-cliente {
+  @apply rounded-lg bg-secondary/60 p-3;
+}
+
+.admin-recibo-cliente-nombre {
+  @apply font-display text-lg font-black;
+}
+
+.admin-recibo-cliente-fecha {
+  @apply text-xs text-muted-foreground;
+}
+
+.admin-recibo-grid {
+  @apply my-4 grid grid-cols-2 gap-3;
+}
+
+.admin-recibo-label {
+  @apply text-[10px] font-bold uppercase tracking-wide text-muted-foreground;
+}
+
+.admin-recibo-value {
+  @apply text-sm font-semibold;
+}
+
+.admin-recibo-items {
+  @apply flex flex-col gap-2;
+}
+
+.admin-recibo-item {
+  @apply flex items-center justify-between gap-3;
+}
+
+.admin-recibo-item-nombre {
+  @apply text-sm font-semibold;
+}
+
+.admin-recibo-item-precio {
+  @apply text-[11px] text-muted-foreground;
+}
+
+.admin-recibo-item-total {
+  @apply text-sm font-bold;
+}
+
+.admin-recibo-item-qty {
+  @apply text-[11px] text-muted-foreground;
+}
+
+.admin-recibo-total {
+  @apply flex items-center justify-between gap-3;
+}
+
+.admin-recibo-total-label {
+  @apply flex items-center gap-1.5 text-xs text-muted-foreground;
+}
+
+.admin-recibo-total-num {
+  @apply font-display text-2xl font-black text-gold;
+}
+
+.admin-recibo-total-pagado {
+  @apply text-[10px] font-bold uppercase tracking-widest text-pitch-bright;
+}
+
+.admin-recibo-actions {
+  @apply flex gap-2 border-t border-border p-4;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .admin-recibo-overlay,
+  .admin-recibo-overlay * {
+    visibility: visible !important;
+  }
+  .admin-recibo-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    background: none;
+  }
+  .admin-recibo-modal {
+    width: 100%;
+    max-width: 100%;
+    border: none;
+    box-shadow: none;
+  }
+  .admin-recibo-close,
+  .admin-recibo-actions {
+    display: none !important;
+  }
+}

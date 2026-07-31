@@ -38,6 +38,7 @@ import "./admin.css";
 const COLORES = ["#F2B705", "#2F9E44", "#E63946", "#4E9CD8", "#B569D8"];
 
 const GraficaTop = lazy(() => import("@/components/admin/grafica-top"));
+const ReciboModal = lazy(() => import("@/components/admin/recibo"));
 
 interface MateriaPrima {
   id_materia_prima: number;
@@ -101,6 +102,7 @@ export default function AdminPage() {
   });
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
+  const [reciboId, setReciboId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!partido.iniciado) { setTiempoTranscurrido("00:00"); return; }
@@ -934,6 +936,7 @@ export default function AdminPage() {
                     <TableHead className="text-right">Total</TableHead>
                     <TableHead>Estado</TableHead>
                     <TableHead>Entrega</TableHead>
+                    <TableHead className="text-right">Recibo</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -978,6 +981,16 @@ export default function AdminPage() {
                         <TableCell className="text-xs whitespace-nowrap">
                           {pedido.tipoEntrega === "pickup" ? "Recoger" : "Delivery"}
                         </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-7 w-7"
+                            onClick={() => setReciboId(pedido.id)}
+                          >
+                            <Receipt className="h-3.5 w-3.5" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -986,6 +999,15 @@ export default function AdminPage() {
           )}
         </CardContent>
       </Card>
+
+      {reciboId && (
+        <Suspense fallback={null}>
+          <ReciboModal
+            pedido={pedidos.find((p) => p.id === reciboId)!}
+            onCerrar={() => setReciboId(null)}
+          />
+        </Suspense>
+      )}
     </main>
   );
 }
