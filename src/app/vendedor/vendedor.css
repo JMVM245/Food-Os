@@ -38,26 +38,6 @@
   @apply font-mono text-xs text-muted-foreground;
 }
 
-.vendedor-auth-label {
-  @apply text-xs font-semibold uppercase tracking-wider text-muted-foreground;
-}
-
-.vendedor-auth-puntos {
-  @apply grid grid-cols-2 gap-1.5;
-}
-
-.vendedor-auth-punto {
-  @apply flex flex-col items-start rounded-md border border-border bg-card px-2.5 py-2 text-left text-xs transition-colors hover:border-accent;
-}
-
-.vendedor-auth-punto-activo {
-  @apply border-accent bg-secondary;
-}
-
-.vendedor-auth-input {
-  @apply mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-accent;
-}
-
 .vendedor-list-main {
   @apply container max-w-2xl py-6;
 }

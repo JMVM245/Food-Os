@@ -70,17 +70,6 @@ export interface Pedido {
   };
 }
 
-export interface RepartidorSesion {
-  nombre: string;
-  codigo: string;
-  puntoId: string;
-  zona: Zona;
-}
-
-export interface RepartidorRegistro extends RepartidorSesion {
-  password: string;
-}
-
 export interface PartidoState {
   iniciado: boolean;
   inicioEn: number | null;
@@ -110,12 +99,6 @@ interface StoreState {
 
   vendedorZona: Zona | null;
   setVendedorZona: (z: Zona | null) => void;
-
-  repartidores: RepartidorRegistro[];
-  repartidorSesion: RepartidorSesion | null;
-  registrarRepartidor: (input: { nombre: string; password: string; puntoId: string; zona: Zona }) => { ok: boolean; error?: string };
-  loginRepartidor: (codigo: string, password: string) => { ok: boolean; error?: string };
-  logoutRepartidor: () => void;
 
   puntosRecoleccion: PuntoRecoleccion[];
   puntoActivo: PuntoRecoleccion | null;
@@ -235,42 +218,6 @@ export const useStore = create<StoreState>()(
 
       vendedorZona: null,
       setVendedorZona: (z) => set({ vendedorZona: z }),
-
-      repartidores: [],
-      repartidorSesion: null,
-      registrarRepartidor: ({ nombre, password, puntoId, zona }) => {
-        const { repartidores, puntosRecoleccion } = get();
-        const punto = puntosRecoleccion.find((p) => p.id === puntoId);
-        if (!punto) return { ok: false, error: "Punto de recolección no encontrado." };
-        if (repartidores.some((r) => r.puntoId === puntoId)) {
-          return { ok: false, error: "Ese punto ya tiene un repartidor registrado." };
-        }
-        const nuevo: RepartidorRegistro = {
-          nombre,
-          codigo: punto.codigo,
-          password,
-          puntoId,
-          zona,
-        };
-        set((s) => ({
-          repartidores: [...s.repartidores, nuevo],
-          repartidorSesion: { nombre, codigo: punto.codigo, puntoId, zona },
-        }));
-        return { ok: true };
-      },
-      loginRepartidor: (codigo, password) => {
-        const { repartidores } = get();
-        const r = repartidores.find(
-          (x) => x.codigo.toLowerCase() === codigo.trim().toLowerCase()
-        );
-        if (!r) return { ok: false, error: "Ese código no está registrado." };
-        if (r.password !== password) return { ok: false, error: "Contraseña incorrecta." };
-        set({
-          repartidorSesion: { nombre: r.nombre, codigo: r.codigo, puntoId: r.puntoId, zona: r.zona },
-        });
-        return { ok: true };
-      },
-      logoutRepartidor: () => set({ repartidorSesion: null, puntoActivo: null }),
 
       puntosRecoleccion: PUNTOS_RECOLECCION_INICIALES,
       puntoActivo: null,
@@ -632,8 +579,6 @@ export const useStore = create<StoreState>()(
           vendedorZona: null,
           puntosRecoleccion: PUNTOS_RECOLECCION_INICIALES,
           puntoActivo: null,
-          repartidores: [],
-          repartidorSesion: null,
           tipoEntrega: "delivery",
           tiendaActiva: "Norte",
           ingresoVendedor: { activo: false, horaInicio: null },
@@ -654,8 +599,6 @@ export const useStore = create<StoreState>()(
             ...persistedState as Record<string, unknown>,
             pedidos: [],
             franjasOcupadas: { ...FRANJAS_INICIALES },
-            repartidores: [],
-            repartidorSesion: null,
             puntoActivo: null,
           } as unknown as StoreState;
         }
