@@ -47,7 +47,7 @@ export default function SeguimientoPage() {
         </p>
         <Button asChild variant="secondary">
           <Link href="/">
-            <ArrowLeft className="h-4 w-4" /> Volver al menÃº
+            <ArrowLeft className="h-4 w-4" /> Volver al menú
           </Link>
         </Button>
       </main>
@@ -91,7 +91,7 @@ export default function SeguimientoPage() {
   return (
     <main className="seguimiento-main">
       <Link href="/" className="seguimiento-back">
-        <ArrowLeft className="h-3.5 w-3.5" /> Volver al menÃº
+        <ArrowLeft className="h-3.5 w-3.5" /> Volver al menú
       </Link>
 
       <Card className="seguimiento-card">
@@ -100,12 +100,12 @@ export default function SeguimientoPage() {
           {entregado ? (
             <div className="seguimiento-status">
               <CheckCircle2 className="seguimiento-status-icon !text-pitch-bright" />
-              <p className="seguimiento-status-text !text-pitch-bright">Â¡Pedido entregado!</p>
+              <p className="seguimiento-status-text !text-pitch-bright">¡Pedido entregado!</p>
             </div>
           ) : notificado ? (
             <div className="seguimiento-status">
               <Bell className="seguimiento-status-icon !text-amber-400 animate-pulse" />
-              <p className="seguimiento-status-text !text-amber-400">Â¡El repartidor ya estÃ¡ en tu zona!</p>
+              <p className="seguimiento-status-text !text-amber-400">¡El repartidor ya está en tu zona!</p>
             </div>
           ) : pedido.estado === "preparando" ? (
             <div className="seguimiento-status">
@@ -152,11 +152,11 @@ export default function SeguimientoPage() {
             </p>
             <p className="seguimiento-direccion">
               {pedido.tipoEntrega === "pickup"
-                ? `Punto de venta Â· Zona ${pedido.tribuna}`
+                ? `Punto de venta · Zona ${pedido.tribuna}`
                 : pedido.tribuna}
             </p>
             {pedido.codigoBoleta && (
-              <p className="text-[11px] text-muted-foreground mt-0.5">CÃ³digo boleta: {pedido.codigoBoleta}</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Código boleta: {pedido.codigoBoleta}</p>
             )}
           </div>
 
