@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { EncuestaSatisfaccion } from "@/components/encuesta/encuesta-satisfaccion";
-import { CheckCircle2, Truck, Bell, Store, ArrowLeft, RotateCcw, Pencil, X, Minus, Plus, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Truck, Bell, Store, ArrowLeft, RotateCcw, Pencil, X, Minus, Plus, ShieldCheck, UserSearch } from "lucide-react";
 import { formatoCOP } from "@/components/cliente/product-card";
 import "../seguimiento.css";
 
@@ -56,7 +56,7 @@ export default function SeguimientoPage() {
 
   const entregado = pedido.estado === "entregado";
   const notificado = pedido.estado === "notificado";
-  const cancelable = pedido.estado === "en_camino" || pedido.estado === "preparando";
+  const cancelable = pedido.estado === "reclamo" || pedido.estado === "en_camino" || pedido.estado === "preparando";
   const totalMs = pedido.tiempoEstimadoMin * 60_000;
   const elapsedMs = ahora - pedido.creadoEn;
   const progreso = entregado
@@ -112,6 +112,11 @@ export default function SeguimientoPage() {
               <Store className="seguimiento-status-icon !text-accent" />
               <p className="seguimiento-status-text">Preparando tu pedido</p>
             </div>
+          ) : pedido.estado === "reclamo" ? (
+            <div className="seguimiento-status">
+              <UserSearch className="seguimiento-status-icon !text-accent animate-pulse" />
+              <p className="seguimiento-status-text">Buscando repartidor para tu pedido</p>
+            </div>
           ) : (
             <div className="seguimiento-status">
               <Truck className="seguimiento-status-icon animate-pulse-dot !text-accent" />
@@ -123,14 +128,28 @@ export default function SeguimientoPage() {
         <CardContent className="seguimiento-body">
           <div className="seguimiento-vendedor">
             <div className="min-w-0">
-              <p className="seguimiento-vendedor-label">Repartidor asignado</p>
-              <p className="seguimiento-vendedor-name">
-                {pedido.vendedor.nombre}{" "}
-                <span className="seguimiento-vendedor-code">#{pedido.vendedor.codigo}</span>
+              <p className="seguimiento-vendedor-label">
+                {pedido.vendedor ? "Repartidor asignado" : "Repartidor"}
               </p>
+              {pedido.vendedor ? (
+                <p className="seguimiento-vendedor-name">
+                  {pedido.vendedor.nombre}{" "}
+                  <span className="seguimiento-vendedor-code">#{pedido.vendedor.codigo}</span>
+                </p>
+              ) : (
+                <p className="seguimiento-vendedor-name">Asignando repartidor…</p>
+              )}
             </div>
-            <Badge variant={entregado ? "success" : notificado ? "warning" : "secondary"} className="shrink-0">
-              {entregado ? "Entregado" : notificado ? "En zona" : pedido.estado === "preparando" ? "Preparando" : "En camino"}
+            <Badge variant={entregado ? "success" : notificado ? "warning" : pedido.estado === "reclamo" ? "outline" : "secondary"} className="shrink-0">
+              {entregado
+                ? "Entregado"
+                : notificado
+                  ? "En zona"
+                  : pedido.estado === "reclamo"
+                    ? "Sin asignar"
+                    : pedido.estado === "preparando"
+                      ? "Preparando"
+                      : "En camino"}
             </Badge>
           </div>
 

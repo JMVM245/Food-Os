@@ -882,7 +882,7 @@ export default function AdminPage() {
                     esc(i.precio),
                     esc(i.precio * i.cantidad),
                     esc(p.total),
-                    esc(p.estado === "entregado" ? "Entregado" : p.estado === "preparando" ? "Preparando" : p.estado === "notificado" ? "Notificado" : "En camino"),
+                    esc(p.estado === "entregado" ? "Entregado" : p.estado === "preparando" ? "Preparando" : p.estado === "notificado" ? "Notificado" : p.estado === "reclamo" ? "Sin repartidor" : "En camino"),
                     esc(p.tipoEntrega === "pickup" ? "Recoger" : "Delivery"),
                   ].join(sep)
                 )
@@ -971,8 +971,8 @@ export default function AdminPage() {
                           ${pedido.total.toLocaleString("es-CO")}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={pedido.estado === "entregado" ? "success" : pedido.estado === "notificado" ? "warning" : pedido.estado === "preparando" ? "outline" : "secondary"}>
-                            {pedido.estado === "entregado" ? "Entregado" : pedido.estado === "preparando" ? "Preparando" : pedido.estado === "notificado" ? "Notificado" : "En camino"}
+                          <Badge variant={pedido.estado === "entregado" ? "success" : pedido.estado === "notificado" ? "warning" : pedido.estado === "reclamo" ? "secondary" : pedido.estado === "preparando" ? "outline" : "default"}>
+                            {pedido.estado === "entregado" ? "Entregado" : pedido.estado === "preparando" ? "Preparando" : pedido.estado === "notificado" ? "Notificado" : pedido.estado === "reclamo" ? "Sin repartidor" : "En camino"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-xs whitespace-nowrap">

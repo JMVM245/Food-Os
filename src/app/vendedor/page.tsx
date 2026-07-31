@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { useStore } from "@/store/store";
@@ -14,13 +14,13 @@ import {
   CheckCircle2,
   LogOut,
   Armchair,
-  Store,
   MapPin,
   Users,
   ChevronRight,
   Clock,
   ShoppingBag,
   ShieldCheck,
+  Hand,
 } from "lucide-react";
 import "./vendedor.css";
 
@@ -57,7 +57,7 @@ function LoginPunto({ onSelect }: { onSelect: (p: PuntoRecoleccion) => void }) {
 
   const pendientesPorZona = useMemo(() => {
     const m = new Map<Zona, number>();
-    for (const z of ZONAS) m.set(z, pedidos.filter((p) => p.zona === z && (p.estado === "en_camino" || p.estado === "notificado") && p.tipoEntrega === "delivery").length);
+    for (const z of ZONAS) m.set(z, pedidos.filter((p) => p.zona === z && (p.estado === "reclamo" || p.estado === "en_camino" || p.estado === "notificado") && p.tipoEntrega === "delivery").length);
     return m;
   }, [pedidos]);
 
@@ -146,21 +146,45 @@ function LoginPunto({ onSelect }: { onSelect: (p: PuntoRecoleccion) => void }) {
     </main>
   );
 }
-
 function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecoleccion; onSalir: () => void }) {
   const pedidos = useStore((s) => s.pedidos);
   const marcarEntregado = useStore((s) => s.marcarEntregado);
   const notificarCliente = useStore((s) => s.notificarCliente);
+  const reclamarPedido = useStore((s) => s.reclamarPedido);
+  const [mensaje, setMensaje] = useState<string | null>(null);
 
-  const pendientes = useMemo(
+  const disponibles = useMemo(
     () =>
       pedidos
-        .filter((p) => p.zona === zona && (p.estado === "en_camino" || p.estado === "notificado") && p.tipoEntrega === "delivery")
+        .filter((p) => p.zona === zona && p.tipoEntrega === "delivery" && p.estado === "reclamo")
         .sort((a, b) => a.creadoEn - b.creadoEn),
     [pedidos, zona]
   );
+
+  const misEntregas = useMemo(
+    () =>
+      pedidos
+        .filter(
+          (p) =>
+            p.zona === zona &&
+            p.tipoEntrega === "delivery" &&
+            p.vendedor?.codigo === punto.codigo &&
+            (p.estado === "en_camino" || p.estado === "notificado")
+        )
+        .sort((a, b) => a.creadoEn - b.creadoEn),
+    [pedidos, zona, punto.codigo]
+  );
+
   const entregadosHoy = pedidos.filter((p) => p.zona === zona && p.estado === "entregado").length;
   const color = ZONA_COLORS[zona];
+
+  function handleReclamar(pedidoId: string) {
+    const ok = reclamarPedido(pedidoId, { nombre: punto.encargado, codigo: punto.codigo });
+    if (!ok) {
+      setMensaje("Otro repartidor se llevó este pedido.");
+      window.setTimeout(() => setMensaje(null), 3000);
+    }
+  }
 
   return (
     <main className="vendedor-list-main">
@@ -190,10 +214,21 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
         <Card>
           <CardContent className="vendedor-kpi-card">
             <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg ${color.bg}`}>
+              <Hand className={`h-5 w-5 ${color.text}`} />
+            </div>
+            <div>
+              <p className="vendedor-kpi-number">{disponibles.length}</p>
+              <p className="vendedor-kpi-label">Disponibles</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="vendedor-kpi-card">
+            <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg ${color.bg}`}>
               <ShoppingBag className={`h-5 w-5 ${color.text}`} />
             </div>
             <div>
-              <p className="vendedor-kpi-number">{pendientes.length}</p>
+              <p className="vendedor-kpi-number">{misEntregas.length}</p>
               <p className="vendedor-kpi-label">Por entregar</p>
             </div>
           </CardContent>
@@ -211,7 +246,148 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
         </Card>
       </div>
 
-      {pendientes.length === 0 ? (
+      {mensaje && (
+        <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
+          {mensaje}
+        </div>
+      )}
+
+      {disponibles.length > 0 && (
+        <section className="mb-6">
+          <h2 className="vendedor-section-title">
+            <Hand className="h-4 w-4 text-accent" /> Pedidos para reclamar
+          </h2>
+          <ul className="vendedor-pedidos-list">
+            {disponibles.map((pedido) => (
+              <Card key={pedido.id} className="overflow-hidden">
+                <div className={`h-1 ${color.bg}`} />
+                <CardHeader className="vendedor-card-header">
+                  <CardTitle className="vendedor-card-title">
+                    <Armchair className="vendedor-card-location" />
+                    <div className="flex flex-col">
+                      <span>{pedido.tribuna}</span>
+                      {pedido.codigoBoleta && (
+                        <span className="text-[10px] font-normal text-muted-foreground">
+                          Boleta: {pedido.codigoBoleta}
+                        </span>
+                      )}
+                    </div>
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      {Math.floor((Date.now() - pedido.creadoEn) / 60000)} min
+                    </div>
+                    <Badge variant="warning">
+                      <Hand className="h-3 w-3 mr-0.5" /> DISPONIBLE
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3 pt-0">
+                  <div className="vendedor-card-items">
+                    {pedido.items.map((item, idx) => (
+                      <div key={item.productoId + (item.variante?.id ?? "") + idx} className="vendedor-card-item">
+                        <span className="flex flex-col">
+                          <span><span className="text-base">{item.emoji}</span> {item.cantidad}x {item.nombre}</span>
+                          {item.variante && (
+                            <span className="text-[11px] text-muted-foreground">{item.variante.nombre}</span>
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <Separator className="my-2" />
+                  <div className="vendedor-card-footer">
+                    <span className="vendedor-card-total">
+                      {formatoCOP.format(pedido.total)}
+                    </span>
+                    <Button size="sm" variant="default" className="h-9 text-xs" onClick={() => handleReclamar(pedido.id)}>
+                      <Hand className="h-4 w-4" />
+                      Yo lo entrego
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {misEntregas.length > 0 && (
+        <section className="mb-6">
+          <h2 className="vendedor-section-title">
+            <Package className="h-4 w-4 text-accent" /> Mis entregas
+          </h2>
+          <ul className="vendedor-pedidos-list">
+            {misEntregas.map((pedido) => (
+              <Card key={pedido.id} className="overflow-hidden">
+                <div className={`h-1 ${color.bg}`} />
+                <CardHeader className="vendedor-card-header">
+                  <CardTitle className="vendedor-card-title">
+                    <Armchair className="vendedor-card-location" />
+                    <div className="flex flex-col">
+                      <span>{pedido.tribuna}</span>
+                      {pedido.codigoBoleta && (
+                        <span className="text-[10px] font-normal text-muted-foreground">
+                          Boleta: {pedido.codigoBoleta}
+                        </span>
+                      )}
+                    </div>
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      {Math.floor((Date.now() - pedido.creadoEn) / 60000)} min
+                    </div>
+                    {pedido.pagado && (
+                      <Badge variant="success">
+                        <ShieldCheck className="h-3 w-3 mr-0.5" /> PAGADO
+                      </Badge>
+                    )}
+                    <Badge variant="outline">
+                      #{pedido.id}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3 pt-0">
+                  <div className="vendedor-card-items">
+                    {pedido.items.map((item, idx) => (
+                      <div key={item.productoId + (item.variante?.id ?? "") + idx} className="vendedor-card-item">
+                        <span className="flex flex-col">
+                          <span><span className="text-base">{item.emoji}</span> {item.cantidad}x {item.nombre}</span>
+                          {item.variante && (
+                            <span className="text-[11px] text-muted-foreground">{item.variante.nombre}</span>
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <Separator className="my-2" />
+                  <div className="vendedor-card-footer">
+                    <span className="vendedor-card-total">
+                      {formatoCOP.format(pedido.total)}
+                    </span>
+                    <div className="flex flex-wrap justify-end gap-1.5">
+                      {pedido.estado === "en_camino" && (
+                        <Button size="sm" variant="default" className="h-8 text-xs" onClick={() => notificarCliente(pedido.id)}>
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Llegué a la zona
+                        </Button>
+                      )}
+                      <Button size="sm" variant="pitch" className="h-8 text-xs" onClick={() => marcarEntregado(pedido.id)}>
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        Entregar
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {disponibles.length === 0 && misEntregas.length === 0 && (
         <div className="vendedor-empty">
           <Package className="vendedor-empty-icon" />
           <p className="vendedor-empty-text">No hay pedidos pendientes en tu zona por ahora.</p>
@@ -219,81 +395,6 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
             <p className="text-xs text-muted-foreground mt-1">Llevas {entregadosHoy} entregado{entregadosHoy !== 1 ? "s" : ""} hoy.</p>
           )}
         </div>
-      ) : (
-        <ul className="vendedor-pedidos-list">
-          {pendientes.map((pedido) => (
-            <Card key={pedido.id} className="overflow-hidden">
-              <div className={`h-1 ${color.bg}`} />
-              <CardHeader className="vendedor-card-header">
-                <CardTitle className="vendedor-card-title">
-                  {pedido.tipoEntrega === "pickup" ? (
-                    <Store className="vendedor-card-location" />
-                  ) : (
-                    <Armchair className="vendedor-card-location" />
-                  )}
-                  <div className="flex flex-col">
-                    <span>
-                      {pedido.tipoEntrega === "pickup"
-                        ? "Recoger en tienda"
-                        : `${pedido.tribuna}`}
-                    </span>
-                    {pedido.codigoBoleta && (
-                      <span className="text-[10px] font-normal text-muted-foreground">
-                        Boleta: {pedido.codigoBoleta}
-                      </span>
-                    )}
-                  </div>
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    {Math.floor((Date.now() - pedido.creadoEn) / 60000)} min
-                  </div>
-                  {pedido.pagado && (
-                    <Badge variant="success">
-                      <ShieldCheck className="h-3 w-3 mr-0.5" /> PAGADO
-                    </Badge>
-                  )}
-                  <Badge variant={pedido.tipoEntrega === "pickup" ? "outline" : "warning"}>
-                    {pedido.tipoEntrega === "pickup" ? "RECOGER" : `#${pedido.id}`}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3 pt-0">
-                <div className="vendedor-card-items">
-                  {pedido.items.map((item, idx) => (
-                    <div key={item.productoId + (item.variante?.id ?? "") + idx} className="vendedor-card-item">
-                      <span className="flex flex-col">
-                        <span><span className="text-base">{item.emoji}</span> {item.cantidad}x {item.nombre}</span>
-                        {item.variante && (
-                          <span className="text-[11px] text-muted-foreground">{item.variante.nombre}</span>
-                        )}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <Separator className="my-2" />
-                <div className="vendedor-card-footer">
-                  <span className="vendedor-card-total">
-                    {formatoCOP.format(pedido.total)}
-                  </span>
-                  <div className="flex flex-wrap justify-end gap-1.5">
-                    {pedido.estado === "en_camino" && (
-                      <Button size="sm" variant="default" className="h-8 text-xs" onClick={() => notificarCliente(pedido.id)}>
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        Llegué a la zona
-                      </Button>
-                    )}
-                    <Button size="sm" variant="pitch" className="h-8 text-xs" onClick={() => marcarEntregado(pedido.id)}>
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      Entregar
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </ul>
       )}
     </main>
   );

@@ -76,7 +76,7 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
 
   const pendientes = useMemo(() =>
     pedidos
-      .filter((p) => p.zona === tienda && p.estado === "preparando")
+      .filter((p) => p.zona === tienda && (p.estado === "preparando" || p.estado === "reclamo"))
       .sort((a, b) => a.creadoEn - b.creadoEn),
     [pedidos, tienda]
   );
@@ -369,8 +369,14 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                 <Separator className="my-2" />
                 <div className="tienda-card-footer">
                   <span className="tienda-card-total">{formatoCOP.format(pedido.total)}</span>
-                  <Button size="sm" variant={pedido.tipoEntrega === "pickup" ? "pitch" : "default"} className="h-8 text-xs" onClick={() => marcarListo(pedido.id)}>
-                    <CheckCircle2 className="h-3.5 w-3.5" /> {pedido.tipoEntrega === "pickup" ? "Listo para recoger" : "Listo para reparto"}
+                  <Button
+                    size="sm"
+                    variant={pedido.tipoEntrega === "pickup" ? "pitch" : "default"}
+                    className="h-8 text-xs"
+                    disabled={pedido.tipoEntrega === "delivery" && !pedido.vendedor}
+                    onClick={() => marcarListo(pedido.id)}
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" /> {pedido.tipoEntrega === "pickup" ? "Listo para recoger" : pedido.vendedor ? "Listo para reparto" : "Esperando repartidor"}
                   </Button>
                 </div>
               </CardContent>

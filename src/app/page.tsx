@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { COMBOS_INICIALES } from "@/lib/data";
 import { formatoCOP } from "@/components/cliente/product-card";
-import { Truck, Eye, CheckCircle2, Timer, Zap, Bell, Store } from "lucide-react";
+import { Truck, Eye, CheckCircle2, Timer, Zap, Bell, Store, UserSearch } from "lucide-react";
 import "./page.css";
 
 function CombosSection() {
@@ -95,7 +95,7 @@ export default function ClientePage() {
   const disponible = useStore((s) => s.disponible);
   const [categoria, setCategoria] = useState<"Todo" | "Comida" | "Bebida">("Todo");
 
-  const pedidoActivo = pedidos.find((p) => p.estado === "preparando" || p.estado === "en_camino" || p.estado === "notificado");
+  const pedidoActivo = pedidos.find((p) => p.estado === "reclamo" || p.estado === "preparando" || p.estado === "en_camino" || p.estado === "notificado");
   const ultimoPedido = pedidos.length > 0 ? pedidos.reduce((a, b) => (a.creadoEn > b.creadoEn ? a : b)) : null;
   const bannerPedido = pedidoActivo ?? ultimoPedido;
 
@@ -136,6 +136,8 @@ export default function ClientePage() {
             <Bell className="h-4 w-4 text-amber-400 animate-pulse" />
           ) : bannerPedido.estado === "preparando" ? (
             <Store className="h-4 w-4 text-accent" />
+          ) : bannerPedido.estado === "reclamo" ? (
+            <UserSearch className="h-4 w-4 text-accent animate-pulse" />
           ) : (
             <Truck className="h-4 w-4 text-accent animate-pulse-dot" />
           )}
@@ -143,7 +145,8 @@ export default function ClientePage() {
             <span className="text-xs font-semibold uppercase tracking-wide">
               {bannerPedido.estado === "entregado" ? "Último pedido" :
                bannerPedido.estado === "notificado" ? "¡Repartidor en zona!" :
-               bannerPedido.estado === "preparando" ? "Preparando pedido" : "Pedido activo"}
+               bannerPedido.estado === "preparando" ? "Preparando pedido" :
+               bannerPedido.estado === "reclamo" ? "Buscando repartidor" : "Pedido activo"}
             </span>
             <span className="text-[11px] text-muted-foreground block truncate">
               #{bannerPedido.id} — {bannerPedido.items.length} producto(s)

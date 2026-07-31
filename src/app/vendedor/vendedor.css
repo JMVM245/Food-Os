@@ -55,7 +55,11 @@
 }
 
 .vendedor-kpi-grid {
-  @apply mb-5 grid grid-cols-2 gap-3;
+  @apply mb-5 grid grid-cols-3 gap-3;
+}
+
+.vendedor-section-title {
+  @apply mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground;
 }
 
 .vendedor-kpi-card {

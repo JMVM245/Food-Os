@@ -5,7 +5,6 @@ import { persist } from "zustand/middleware";
 import { supabase } from "@/lib/supabase";
 import {
   PRODUCTOS_INICIALES,
-  VENDEDORES_DEMO,
   PUNTOS_RECOLECCION_INICIALES,
   COMBOS_INICIALES,
   type Producto,
@@ -42,7 +41,7 @@ export interface ItemCarrito {
   comboId?: string;
 }
 
-export type EstadoPedido = "preparando" | "en_camino" | "notificado" | "entregado";
+export type EstadoPedido = "reclamo" | "preparando" | "en_camino" | "notificado" | "entregado";
 export type TipoEntrega = "delivery" | "pickup";
 
 export interface Pedido {
@@ -57,7 +56,7 @@ export interface Pedido {
   estado: EstadoPedido;
   pagado: boolean;
   tipoEntrega: TipoEntrega;
-  vendedor: { nombre: string; codigo: string };
+  vendedor: { nombre: string; codigo: string } | null;
   creadoEn: number;
   tiempoEstimadoMin: number;
   horaEntrega?: string;
@@ -123,6 +122,7 @@ interface StoreState {
 
   pedidos: Pedido[];
   crearPedido: (horaEntrega?: string) => string | null;
+  reclamarPedido: (pedidoId: string, vendedor: { nombre: string; codigo: string }) => boolean;
   cancelarPedido: (pedidoId: string) => void;
   updatePedidoItems: (pedidoId: string, items: ItemPedido[]) => void;
   marcarListo: (pedidoId: string) => void;
@@ -169,8 +169,8 @@ async function syncPedidoToSupabase(pedido: Pedido) {
       items: pedido.items,
       total: pedido.total,
       estado: pedido.estado,
-      vendedor_nombre: pedido.vendedor.nombre,
-      vendedor_codigo: pedido.vendedor.codigo,
+      vendedor_nombre: pedido.vendedor?.nombre ?? null,
+      vendedor_codigo: pedido.vendedor?.codigo ?? null,
       creado_en: new Date(pedido.creadoEn).toISOString(),
       tiempo_estimado_min: pedido.tiempoEstimadoMin,
       entregado_en: pedido.entregadoEn ? new Date(pedido.entregadoEn).toISOString() : null,
@@ -189,6 +189,20 @@ async function syncEntregaToSupabase(pedido: Pedido) {
       entregado_en: new Date(pedido.entregadoEn!).toISOString(),
     }).eq("id", pedido.id);
     if (error) console.warn("Supabase sync error (entrega):", error.message);
+  } catch {
+    /* skip */
+  }
+}
+
+async function syncAsignacionToSupabase(pedidoId: string, vendedor: { nombre: string; codigo: string }) {
+  if (!supabase) return;
+  try {
+    const { error } = await supabase.from("pedidos").update({
+      estado: "preparando",
+      vendedor_nombre: vendedor.nombre,
+      vendedor_codigo: vendedor.codigo,
+    }).eq("id", pedidoId);
+    if (error) console.warn("Supabase sync error (asignación):", error.message);
   } catch {
     /* skip */
   }
@@ -285,7 +299,7 @@ export const useStore = create<StoreState>()(
       reservadoPorZona: (productoId, zona) => {
         const { pedidos } = get();
         return pedidos
-          .filter((p) => p.zona === zona && p.tipoEntrega === "delivery" && (p.estado === "preparando" || p.estado === "en_camino" || p.estado === "notificado"))
+          .filter((p) => p.zona === zona && p.tipoEntrega === "delivery" && (p.estado === "reclamo" || p.estado === "preparando" || p.estado === "en_camino" || p.estado === "notificado"))
           .flatMap((p) => p.items)
           .filter((i) => i.productoId === productoId)
           .reduce((acc, i) => acc + i.cantidad, 0);
@@ -356,7 +370,6 @@ export const useStore = create<StoreState>()(
 
         const items = itemsConCombo.map(({ comboId, ...rest }) => { void comboId; return rest; });
         const total = items.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
-        const vendedor = VENDEDORES_DEMO[zona];
         const tiempoEstimadoMin = tipoEntrega === "pickup" ? 5 + Math.floor(Math.random() * 5) : 8 + Math.floor(Math.random() * 8);
 
         const pedido: Pedido = {
@@ -368,10 +381,10 @@ export const useStore = create<StoreState>()(
           codigoBoleta: asiento.codigoBoleta || "",
           items,
           total,
-          estado: "preparando",
+          estado: tipoEntrega === "delivery" ? "reclamo" : "preparando",
           pagado: true,
           tipoEntrega,
-          vendedor,
+          vendedor: null,
           creadoEn: Date.now(),
           tiempoEstimadoMin,
           horaEntrega: tipoEntrega === "delivery" ? horaEntrega : undefined,
@@ -420,10 +433,24 @@ export const useStore = create<StoreState>()(
         return pedido.id;
       },
 
+      reclamarPedido: (pedidoId, vendedor) => {
+        const { pedidos } = get();
+        const pedido = pedidos.find((p) => p.id === pedidoId);
+        if (!pedido || pedido.estado !== "reclamo" || pedido.tipoEntrega !== "delivery") return false;
+        set((s) => ({
+          pedidos: s.pedidos.map((p) =>
+            p.id === pedidoId ? { ...p, vendedor, estado: "preparando" as const } : p
+          ),
+        }));
+        syncAsignacionToSupabase(pedidoId, vendedor);
+        return true;
+      },
+
       marcarListo: (pedidoId) =>
         set((s) => {
           const pedido = s.pedidos.find((p) => p.id === pedidoId);
           if (!pedido || pedido.estado !== "preparando") return s;
+          if (pedido.tipoEntrega === "delivery" && !pedido.vendedor) return s;
           const nuevoEstado: EstadoPedido = pedido.tipoEntrega === "pickup" ? "entregado" : "en_camino";
           const data: Partial<Pedido> = { estado: nuevoEstado };
           if (nuevoEstado === "entregado") data.entregadoEn = Date.now();
