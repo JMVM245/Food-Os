@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useStore } from "@/store/store";
-import { TIENDAS, type Tienda } from "@/lib/data";
+import { TIENDAS, type Tienda, type Producto } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,9 +69,10 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
   const marcarEntregado = useStore((s) => s.marcarEntregado);
   const setTipoEntrega = useStore((s) => s.setTipoEntrega);
   const setTiendaActiva = useStore((s) => s.setTiendaActiva);
-  const [carrito, setCarrito] = useState<{ productoId: string; nombre: string; emoji: string; precio: number; cantidad: number }[]>([]);
+  const [carrito, setCarrito] = useState<{ key: string; productoId: string; nombre: string; emoji: string; precio: number; cantidad: number; varianteId?: string; varianteNombre?: string }[]>([]);
   const [showPos, setShowPos] = useState(false);
   const [mostrarPago, setMostrarPago] = useState(false);
+  const [variantePicker, setVariantePicker] = useState<typeof productos[0] | null>(null);
 
   const pendientes = useMemo(() =>
     pedidos
@@ -89,25 +90,53 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
   const addToCart = useStore((s) => s.addToCart);
   const clearCart = useStore((s) => s.clearCart);
 
-  function handleAgregarProducto(prod: typeof productos[0]) {
+  const keyCarrito = (i: { productoId: string; varianteId?: string }) => i.productoId + (i.varianteId ?? "");
+
+  function agregarAlCarrito(prod: typeof productos[0], variante?: { id: string; nombre: string; precioExtra: number }) {
+    const key = keyCarrito({ productoId: prod.id, varianteId: variante?.id });
     setCarrito((prev) => {
-      const existente = prev.find((i) => i.productoId === prod.id);
+      const existente = prev.find((i) => i.key === key);
       if (existente) {
         return prev.map((i) =>
-          i.productoId === prod.id ? { ...i, cantidad: i.cantidad + 1 } : i
+          i.key === key ? { ...i, cantidad: i.cantidad + 1 } : i
         );
       }
-      return [...prev, { productoId: prod.id, nombre: prod.nombre, emoji: prod.emoji, precio: prod.precio, cantidad: 1 }];
+      return [...prev, {
+        key,
+        productoId: prod.id,
+        nombre: prod.nombre,
+        emoji: prod.emoji,
+        precio: prod.precio + (variante?.precioExtra ?? 0),
+        cantidad: 1,
+        varianteId: variante?.id,
+        varianteNombre: variante?.nombre,
+      }];
     });
   }
 
-  function handleQuitarProducto(productoId: string) {
+  function handleAgregarProducto(prod: typeof productos[0]) {
+    if (prod.variantes && prod.variantes.length > 0) {
+      setVariantePicker(prod);
+      return;
+    }
+    agregarAlCarrito(prod);
+  }
+
+  function handleAgregarMas(item: (typeof carrito)[0]) {
+    setCarrito((prev) =>
+      prev.map((i) =>
+        i.key === item.key ? { ...i, cantidad: i.cantidad + 1 } : i
+      )
+    );
+  }
+
+  function handleQuitarProducto(key: string) {
     setCarrito((prev) => {
-      const existente = prev.find((i) => i.productoId === productoId);
+      const existente = prev.find((i) => i.key === key);
       if (!existente) return prev;
-      if (existente.cantidad <= 1) return prev.filter((i) => i.productoId !== productoId);
+      if (existente.cantidad <= 1) return prev.filter((i) => i.key !== key);
       return prev.map((i) =>
-        i.productoId === productoId ? { ...i, cantidad: i.cantidad - 1 } : i
+        i.key === key ? { ...i, cantidad: i.cantidad - 1 } : i
       );
     });
   }
@@ -122,7 +151,7 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
     clearCart();
     for (const item of carrito) {
       for (let index = 0; index < item.cantidad; index++) {
-        addToCart(item.productoId);
+        addToCart(item.productoId, item.varianteId);
       }
     }
     setTipoEntrega("pickup");
@@ -199,6 +228,9 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                   <span className="tienda-pos-emoji">{prod.emoji}</span>
                   <span className="tienda-pos-nombre">{prod.nombre}</span>
                   <span className="tienda-pos-precio">{formatoCOP.format(prod.precio)}</span>
+                  {prod.variantes && prod.variantes.length > 0 && (
+                    <span className="tienda-pos-variantes">+ opciones</span>
+                  )}
                 </button>
               ))}
             </div>
@@ -209,18 +241,23 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                 <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">Carrito</p>
                 <div className="tienda-cart-list">
                   {carrito.map((item) => (
-                    <div key={item.productoId} className="tienda-cart-item">
-                      <span className="flex items-center gap-1.5 truncate">
-                        <span>{item.emoji}</span>
-                        <span className="truncate">{item.nombre}</span>
-                        <span className="font-mono text-muted-foreground">×{item.cantidad}</span>
+                    <div key={item.key} className="tienda-cart-item">
+                      <span className="flex flex-col min-w-0">
+                        <span className="flex items-center gap-1.5 truncate">
+                          <span>{item.emoji}</span>
+                          <span className="truncate">{item.nombre}</span>
+                          <span className="font-mono text-muted-foreground">×{item.cantidad}</span>
+                        </span>
+                        {item.varianteNombre && (
+                          <span className="text-[11px] text-muted-foreground">{item.varianteNombre}</span>
+                        )}
                       </span>
                       <div className="flex items-center gap-1 shrink-0">
                         <span className="font-mono text-xs">{formatoCOP.format(item.precio * item.cantidad)}</span>
-                        <button onClick={() => handleQuitarProducto(item.productoId)} className="text-muted-foreground hover:text-foreground">
+                        <button onClick={() => handleQuitarProducto(item.key)} className="text-muted-foreground hover:text-foreground">
                           <Minus className="h-3 w-3" />
                         </button>
-                        <button onClick={() => { const p = productos.find((x) => x.id === item.productoId); if (p) handleAgregarProducto(p); }} className="text-muted-foreground hover:text-foreground">
+                        <button onClick={() => handleAgregarMas(item)} className="text-muted-foreground hover:text-foreground">
                           <Plus className="h-3 w-3" />
                         </button>
                       </div>
@@ -245,6 +282,17 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                 totalCarrito={totalCarrito}
                 onConfirmar={handleConfirmarPago}
                 onCancelar={() => setMostrarPago(false)}
+              />
+            )}
+
+            {variantePicker && (
+              <VariantePickerModal
+                producto={variantePicker}
+                onSelect={(v) => {
+                  agregarAlCarrito(variantePicker, v);
+                  setVariantePicker(null);
+                }}
+                onCerrar={() => setVariantePicker(null)}
               />
             )}
           </CardContent>
@@ -315,7 +363,7 @@ function PaymentQRModal({
   tienda, carrito, totalCarrito, onConfirmar, onCancelar,
 }: {
   tienda: Tienda;
-  carrito: { productoId: string; nombre: string; emoji: string; precio: number; cantidad: number }[];
+  carrito: { key: string; productoId: string; nombre: string; emoji: string; precio: number; cantidad: number; varianteId?: string; varianteNombre?: string }[];
   totalCarrito: number;
   onConfirmar: () => void;
   onCancelar: () => void;
@@ -389,8 +437,11 @@ function PaymentQRModal({
 
           <div className="tienda-qr-items">
             {carrito.map((item) => (
-              <div key={item.productoId} className="tienda-qr-item">
-                <span className="tienda-qr-item-name">{item.emoji} {item.nombre} ×{item.cantidad}</span>
+              <div key={item.key ?? item.productoId} className="tienda-qr-item">
+                <span className="tienda-qr-item-name">
+                  {item.emoji} {item.nombre} ×{item.cantidad}
+                  {item.varianteNombre && <span className="block text-[10px] text-muted-foreground">{item.varianteNombre}</span>}
+                </span>
                 <span className="font-mono shrink-0">{formatoCOP.format(item.precio * item.cantidad)}</span>
               </div>
             ))}
@@ -415,6 +466,47 @@ function PaymentQRModal({
           <Button size="sm" className="flex-1 h-9" onClick={() => { onConfirmar(); setPagado(true); }}>
             <CheckCircle2 className="h-3.5 w-3.5" /> Confirmar pago
           </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VariantePickerModal({
+  producto, onSelect, onCerrar,
+}: {
+  producto: Producto;
+  onSelect: (v: { id: string; nombre: string; precioExtra: number }) => void;
+  onCerrar: () => void;
+}) {
+  return (
+    <div className="tienda-var-overlay">
+      <div className="tienda-var-modal">
+        <button className="tienda-var-close" onClick={onCerrar}>
+          <X className="h-4 w-4" />
+        </button>
+
+        <div className="tienda-var-header">
+          <span className="tienda-var-emoji">{producto.emoji}</span>
+          <div>
+            <p className="tienda-var-label">Elige la presentación</p>
+            <h2 className="tienda-var-title">{producto.nombre}</h2>
+          </div>
+        </div>
+
+        <div className="tienda-var-list">
+          {(producto.variantes ?? []).map((v) => (
+            <button key={v.id} className="tienda-var-item" onClick={() => onSelect(v)}>
+              <span className="tienda-var-item-name">
+                {v.nombre}
+                <span className="block text-[11px] font-normal text-muted-foreground">
+                  Base {formatoCOP.format(producto.precio)}
+                  {v.precioExtra > 0 && ` + ${formatoCOP.format(v.precioExtra)}`}
+                </span>
+              </span>
+              <span className="tienda-var-item-price">{formatoCOP.format(producto.precio + v.precioExtra)}</span>
+            </button>
+          ))}
         </div>
       </div>
     </div>

@@ -114,12 +114,62 @@
   @apply text-xs font-mono text-muted-foreground;
 }
 
+.tienda-pos-variantes {
+  @apply rounded-sm bg-accent/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-accent;
+}
+
 .tienda-cart-list {
   @apply space-y-2 max-h-60 overflow-y-auto;
 }
 
 .tienda-cart-item {
-  @apply flex items-center justify-between rounded-md bg-secondary p-2 text-sm;
+  @apply flex items-center justify-between gap-2 rounded-md bg-secondary p-2 text-sm;
+}
+
+/* Variante picker Modal */
+.tienda-var-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/70 p-4;
+}
+
+.tienda-var-modal {
+  @apply relative flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-card p-5 shadow-2xl;
+  max-height: 92vh;
+}
+
+.tienda-var-close {
+  @apply absolute right-3 top-3 text-muted-foreground hover:text-foreground;
+}
+
+.tienda-var-header {
+  @apply flex items-center gap-3;
+}
+
+.tienda-var-emoji {
+  @apply grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-secondary text-2xl;
+}
+
+.tienda-var-label {
+  @apply font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground;
+}
+
+.tienda-var-title {
+  @apply font-display text-lg font-black uppercase;
+}
+
+.tienda-var-list {
+  @apply flex flex-col gap-2 overflow-y-auto;
+}
+
+.tienda-var-item {
+  @apply flex items-center justify-between gap-2 rounded-md border border-border bg-card p-3 text-left transition-colors hover:border-accent hover:bg-secondary;
+}
+
+.tienda-var-item-name {
+  @apply text-sm font-semibold min-w-0;
+}
+
+.tienda-var-item-price {
+  @apply shrink-0 font-mono text-sm text-gold;
 }
 
 /* QR Payment Modal */
