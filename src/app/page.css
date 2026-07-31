@@ -37,3 +37,27 @@
 .cliente-seat-section {
   @apply mb-6;
 }
+
+.cliente-cerrado {
+  @apply flex min-h-[70vh] items-center justify-center;
+}
+
+.cliente-cerrado-card {
+  @apply flex w-full max-w-md flex-col items-center gap-3 rounded-xl border border-border bg-card p-8 text-center;
+}
+
+.cliente-cerrado-icon {
+  @apply grid h-16 w-16 place-items-center rounded-full bg-muted text-muted-foreground;
+}
+
+.cliente-cerrado-badge {
+  @apply font-mono text-xs uppercase tracking-[0.2em] text-destructive;
+}
+
+.cliente-cerrado-title {
+  @apply font-display text-3xl font-black uppercase text-muted-foreground;
+}
+
+.cliente-cerrado-desc {
+  @apply text-sm text-muted-foreground;
+}

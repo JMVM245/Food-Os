@@ -145,6 +145,9 @@ interface StoreState {
   setMedioTiempo: (v: boolean) => void;
   finalizarPartido: () => void;
 
+  disponible: boolean;
+  setDisponible: (v: boolean) => void;
+
   franjasOcupadas: Record<string, Record<Zona, number>>;
   disponibleEnFranja: (hora: string, zona: Zona) => number;
 
@@ -544,6 +547,9 @@ export const useStore = create<StoreState>()(
       setMedioTiempo: (v) => set((s) => ({ partido: { ...s.partido, medioTiempo: v } })),
       finalizarPartido: () => set({ partido: { iniciado: false, inicioEn: null, medioTiempo: false, finalizado: true } }),
 
+      disponible: true,
+      setDisponible: (v) => set({ disponible: v }),
+
       resetDemo: () =>
         set({
           productos: PRODUCTOS_INICIALES,
@@ -558,6 +564,7 @@ export const useStore = create<StoreState>()(
           tiendaActiva: "Norte",
           ingresoVendedor: { activo: false, horaInicio: null },
           partido: { iniciado: false, inicioEn: null, medioTiempo: false, finalizado: false },
+          disponible: true,
           franjasOcupadas: { ...FRANJAS_INICIALES },
         }),
     }),

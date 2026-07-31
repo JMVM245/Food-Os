@@ -30,6 +30,8 @@ import {
   Square,
   Coffee,
   Clock,
+  Lock,
+  LockOpen,
 } from "lucide-react";
 import "./admin.css";
 
@@ -61,6 +63,8 @@ export default function AdminPage() {
   const iniciarPartido = useStore((s) => s.iniciarPartido);
   const setMedioTiempo = useStore((s) => s.setMedioTiempo);
   const finalizarPartido = useStore((s) => s.finalizarPartido);
+  const disponible = useStore((s) => s.disponible);
+  const setDisponible = useStore((s) => s.setDisponible);
   const franjasOcupadas = useStore((s) => s.franjasOcupadas);
 
   const [tiempoTranscurrido, setTiempoTranscurrido] = useState("00:00");
@@ -301,12 +305,30 @@ export default function AdminPage() {
       <header className="admin-header">
         <div>
           <p className="admin-badge">Control de operaciones</p>
-          <h1 className="admin-title">Dashboard del estadio</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="admin-title">Dashboard del estadio</h1>
+            <Badge variant={disponible ? "success" : "soldout"}>
+              {disponible ? "Página abierta" : "Página cerrada"}
+            </Badge>
+          </div>
         </div>
-        <Button variant="outline" size="sm" onClick={resetDemo}>
-          <RotateCcw className="h-3.5 w-3.5" />
-          Reiniciar demo
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant={disponible ? "destructive" : "default"}
+            size="sm"
+            onClick={() => setDisponible(!disponible)}
+          >
+            {disponible ? (
+              <><Lock className="h-3.5 w-3.5" /> Cerrar página</>
+            ) : (
+              <><LockOpen className="h-3.5 w-3.5" /> Abrir página</>
+            )}
+          </Button>
+          <Button variant="outline" size="sm" onClick={resetDemo}>
+            <RotateCcw className="h-3.5 w-3.5" />
+            Reiniciar demo
+          </Button>
+        </div>
       </header>
 
       <div className="admin-kpi-grid">

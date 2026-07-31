@@ -92,6 +92,7 @@ export default function ClientePage() {
   const pedidos = useStore((s) => s.pedidos);
   const tipoEntrega = useStore((s) => s.tipoEntrega);
   const tiendaActiva = useStore((s) => s.tiendaActiva);
+  const disponible = useStore((s) => s.disponible);
   const [categoria, setCategoria] = useState<"Todo" | "Comida" | "Bebida">("Todo");
 
   const pedidoActivo = pedidos.find((p) => p.estado === "preparando" || p.estado === "en_camino" || p.estado === "notificado");
@@ -102,6 +103,25 @@ export default function ClientePage() {
     () => productos.filter((p) => categoria === "Todo" || p.categoria === categoria),
     [productos, categoria]
   );
+
+  if (!disponible) {
+    return (
+      <main className="cliente-main">
+        <div className="cliente-cerrado">
+          <div className="cliente-cerrado-card">
+            <div className="cliente-cerrado-icon">
+              <Store className="h-8 w-8" />
+            </div>
+            <p className="cliente-cerrado-badge">Fuera de servicio</p>
+            <h1 className="cliente-cerrado-title">No disponible</h1>
+            <p className="cliente-cerrado-desc">
+              No hay un partido en curso en este momento. Vuelve cuando comience el partido para hacer tu pedido.
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="cliente-main">
