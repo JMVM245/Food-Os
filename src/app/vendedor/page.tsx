@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Clock,
   ShoppingBag,
+  ShieldCheck,
 } from "lucide-react";
 import "./vendedor.css";
 
@@ -251,6 +252,11 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
                     <Clock className="h-3 w-3" />
                     {Math.floor((Date.now() - pedido.creadoEn) / 60000)} min
                   </div>
+                  {pedido.pagado && (
+                    <Badge variant="success">
+                      <ShieldCheck className="h-3 w-3 mr-0.5" /> PAGADO
+                    </Badge>
+                  )}
                   <Badge variant={pedido.tipoEntrega === "pickup" ? "outline" : "warning"}>
                     {pedido.tipoEntrega === "pickup" ? "RECOGER" : `#${pedido.id}`}
                   </Badge>
@@ -281,10 +287,12 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
                         Llegué a la zona
                       </Button>
                     )}
-                    <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => setQrPedidoId(qrPedidoId === pedido.id ? null : pedido.id)}>
-                      <QrCode className="h-3.5 w-3.5" />
-                      QR
-                    </Button>
+                    {!pedido.pagado && (
+                      <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => setQrPedidoId(qrPedidoId === pedido.id ? null : pedido.id)}>
+                        <QrCode className="h-3.5 w-3.5" />
+                        QR
+                      </Button>
+                    )}
                     <Button size="sm" variant="pitch" className="h-8 text-xs" onClick={() => marcarEntregado(pedido.id)}>
                       <CheckCircle2 className="h-3.5 w-3.5" />
                       Entregar

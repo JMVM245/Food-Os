@@ -5,11 +5,12 @@ import { useStore } from "@/store/store";
 import { TIENDAS, type Tienda } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatoCOP } from "@/components/cliente/product-card";
 import {
   Store, CheckCircle2, LogOut, ShoppingCart, Plus, Minus,
-  Clock, Package, ShoppingBag, X, QrCode,
+  Clock, Package, ShoppingBag, X, QrCode, ShieldCheck,
 } from "lucide-react";
 import "./tienda.css";
 
@@ -275,6 +276,11 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                   <span>{pedido.tipoEntrega === "pickup" ? "Recoger en tienda" : `Delivery · ${pedido.tribuna}`}</span>
                 </CardTitle>
                 <div className="flex items-center gap-2">
+                  {pedido.pagado && (
+                    <Badge variant="success">
+                      <ShieldCheck className="h-3 w-3 mr-0.5" /> PAGADO
+                    </Badge>
+                  )}
                   <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                     <Clock className="h-3 w-3" />
                     {Math.floor((Date.now() - pedido.creadoEn) / 60000)} min

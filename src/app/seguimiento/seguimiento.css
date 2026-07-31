@@ -107,6 +107,85 @@
   @apply flex items-center justify-between font-display text-lg font-bold uppercase;
 }
 
+.seguimiento-pagado {
+  @apply flex items-center gap-3 rounded-md border border-pitch-bright/40 bg-pitch-bright/10 p-3;
+}
+
+.seguimiento-pagado-title {
+  @apply font-display text-sm font-black uppercase tracking-wide text-pitch-bright;
+}
+
+.seguimiento-pagado-desc {
+  @apply text-xs text-muted-foreground;
+}
+
+/* Pago anticipado Modal */
+.seguimiento-pago-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/70 p-4;
+}
+
+.seguimiento-pago-modal {
+  @apply relative flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-card p-5 shadow-2xl;
+  max-height: 92vh;
+}
+
+.seguimiento-pago-close {
+  @apply absolute right-3 top-3 text-muted-foreground hover:text-foreground;
+}
+
+.seguimiento-pago-header {
+  @apply flex items-center gap-3;
+}
+
+.seguimiento-pago-label {
+  @apply font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground;
+}
+
+.seguimiento-pago-title {
+  @apply font-display text-lg font-black uppercase;
+}
+
+.seguimiento-pago-body {
+  @apply flex flex-col items-center gap-3 overflow-y-auto;
+  min-height: 0;
+}
+
+.seguimiento-pago-code {
+  @apply flex shrink-0 items-center justify-center rounded-xl border border-border bg-white p-3;
+}
+
+.seguimiento-pago-img {
+  @apply h-40 w-40 sm:h-48 sm:w-48;
+}
+
+.seguimiento-pago-loading {
+  @apply flex h-40 w-40 items-center justify-center text-xs text-muted-foreground sm:h-48 sm:w-48;
+}
+
+.seguimiento-pago-items {
+  @apply w-full space-y-1 text-xs;
+}
+
+.seguimiento-pago-item {
+  @apply flex items-center justify-between gap-2;
+}
+
+.seguimiento-pago-item-name {
+  @apply min-w-0 truncate;
+}
+
+.seguimiento-pago-total {
+  @apply flex w-full shrink-0 items-center justify-between text-sm font-semibold;
+}
+
+.seguimiento-pago-ref {
+  @apply shrink-0 text-[10px] text-muted-foreground;
+}
+
+.seguimiento-pago-actions {
+  @apply flex shrink-0 items-center gap-2;
+}
+
 .seguimiento-total-label {
   @apply text-sm text-muted-foreground;
 }

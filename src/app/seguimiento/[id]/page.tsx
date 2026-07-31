@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useStore } from "@/store/store";
-import type { ItemPedido } from "@/store/store";
+import type { ItemPedido, Pedido } from "@/store/store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { EncuestaSatisfaccion } from "@/components/encuesta/encuesta-satisfaccion";
-import { CheckCircle2, Truck, Bell, Store, ArrowLeft, RotateCcw, Pencil, X, Minus, Plus } from "lucide-react";
+import { CheckCircle2, Truck, Bell, Store, ArrowLeft, RotateCcw, Pencil, X, Minus, Plus, CreditCard, ShieldCheck } from "lucide-react";
 import { formatoCOP } from "@/components/cliente/product-card";
 import "../seguimiento.css";
 
@@ -22,9 +22,11 @@ export default function SeguimientoPage() {
   const addToCart = useStore((s) => s.addToCart);
   const updatePedidoItems = useStore((s) => s.updatePedidoItems);
   const marcarEntregado = useStore((s) => s.marcarEntregado);
+  const marcarPagado = useStore((s) => s.marcarPagado);
   const [ahora, setAhora] = useState(() => Date.now());
   const [editando, setEditando] = useState(false);
   const [editItems, setEditItems] = useState<ItemPedido[]>([]);
+  const [mostrarPago, setMostrarPago] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setAhora(Date.now()), 1000);
@@ -204,8 +206,28 @@ export default function SeguimientoPage() {
 
           <Separator />
 
+          {pedido.pagado ? (
+            <div className="seguimiento-pagado">
+              <ShieldCheck className="h-4 w-4" />
+              <div>
+                <p className="seguimiento-pagado-title">PAGADO</p>
+                <p className="seguimiento-pagado-desc">Pagaste por anticipado. Solo recibe tu pedido.</p>
+              </div>
+            </div>
+          ) : (
+            !entregado && (
+              <>
+                <Separator />
+                <Button variant="pitch" size="sm" className="w-full h-9" onClick={() => setMostrarPago(true)}>
+                  <CreditCard className="h-4 w-4" />
+                  Pagar por anticipado
+                </Button>
+              </>
+            )
+          )}
+
           <div className="seguimiento-total">
-            <span className="seguimiento-total-label">Total {editando ? "ajustado" : "pagado"}</span>
+            <span className="seguimiento-total-label">Total {editando ? "ajustado" : "a pagar"}</span>
             <span className="seguimiento-total-value">
               {formatoCOP.format(
                 editando ? editItems.reduce((acc, i) => acc + i.precio * i.cantidad, 0) : pedido.total
@@ -228,6 +250,16 @@ export default function SeguimientoPage() {
             </>
           )}
 
+          {mostrarPago && (
+            <PagoAnticipadoModal
+              pedido={pedido}
+              onConfirmar={() => {
+                marcarPagado(pedido.id);
+              }}
+              onCerrar={() => setMostrarPago(false)}
+            />
+          )}
+
           </CardContent>
         </Card>
 
@@ -244,5 +276,111 @@ export default function SeguimientoPage() {
         </div>
       )}
     </main>
+  );
+}
+
+function PagoAnticipadoModal({
+  pedido, onConfirmar, onCerrar,
+}: {
+  pedido: Pedido;
+  onConfirmar: () => void;
+  onCerrar: () => void;
+}) {
+  const [qrDataUrl, setQrDataUrl] = useState("");
+  const [pagado, setPagado] = useState(false);
+  const ref = `PEDIDO-${pedido.id}-${Date.now().toString(36).toUpperCase()}`;
+
+  useEffect(() => {
+    import("qrcode").then((mod) => {
+      mod.default.toDataURL(
+        `fifa-delivery://pago?pedido=${pedido.id}&total=${pedido.total}&ref=${ref}`,
+        { width: 240, margin: 2, color: { dark: "#1a1a2e", light: "#ffffff" } },
+        (err, url) => { if (!err) setQrDataUrl(url); }
+      );
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (pagado) {
+    return (
+      <div className="seguimiento-pago-overlay">
+        <div className="seguimiento-pago-modal">
+          <div className="flex flex-col items-center gap-3 py-6">
+            <div className="grid h-16 w-16 place-items-center rounded-full bg-pitch-bright/15">
+              <CheckCircle2 className="h-8 w-8 text-pitch-bright" />
+            </div>
+            <h2 className="font-display text-xl font-black uppercase text-pitch-bright">¡Pago exitoso!</h2>
+            <p className="text-sm text-muted-foreground text-center">
+              Tu pedido #{pedido.id} quedó pagado por anticipado.
+            </p>
+            <p className="text-xs text-muted-foreground font-mono">
+              Ref: {ref}
+            </p>
+            <Button size="sm" className="mt-2 h-9" onClick={onCerrar}>
+              Cerrar
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="seguimiento-pago-overlay">
+      <div className="seguimiento-pago-modal">
+        <button className="seguimiento-pago-close" onClick={onCerrar}>
+          <X className="h-4 w-4" />
+        </button>
+
+        <div className="seguimiento-pago-header">
+          <div className="grid h-10 w-10 place-items-center rounded-lg bg-accent/15">
+            <CreditCard className="h-5 w-5 text-accent" />
+          </div>
+          <div>
+            <p className="seguimiento-pago-label">Pago anticipado</p>
+            <h2 className="seguimiento-pago-title">Pedido #{pedido.id}</h2>
+          </div>
+        </div>
+
+        <div className="seguimiento-pago-body">
+          <div className="seguimiento-pago-code">
+            {qrDataUrl ? (
+              <img src={qrDataUrl} alt="Código QR de pago" className="seguimiento-pago-img" />
+            ) : (
+              <div className="seguimiento-pago-loading">Generando QR...</div>
+            )}
+          </div>
+
+          <div className="seguimiento-pago-items">
+            {pedido.items.map((item) => (
+              <div key={item.productoId + item.variante?.id} className="seguimiento-pago-item">
+                <span className="seguimiento-pago-item-name">{item.emoji} {item.nombre} ×{item.cantidad}</span>
+                <span className="font-mono shrink-0">{formatoCOP.format(item.precio * item.cantidad)}</span>
+              </div>
+            ))}
+          </div>
+
+          <Separator />
+
+          <div className="seguimiento-pago-total">
+            <span>Total</span>
+            <span className="font-display font-bold text-gold">{formatoCOP.format(pedido.total)}</span>
+          </div>
+
+          <p className="seguimiento-pago-ref">
+            Referencia: <span className="font-mono">{ref}</span>
+          </p>
+        </div>
+
+        <div className="seguimiento-pago-actions">
+          <Button variant="outline" size="sm" className="flex-1 h-9" onClick={onCerrar}>
+            Cancelar
+          </Button>
+          <Button size="sm" className="flex-1 h-9" onClick={() => { onConfirmar(); setPagado(true); }}>
+            <CheckCircle2 className="h-3.5 w-3.5" /> Confirmar pago
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
