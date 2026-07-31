@@ -9,11 +9,15 @@
 }
 
 .role-nav-inner {
-  @apply container flex h-14 items-center justify-between;
+  @apply container flex h-14 items-center justify-between gap-2;
 }
 
 .role-nav-logo {
-  @apply flex items-center gap-2;
+  @apply flex min-w-0 items-center gap-2;
+}
+
+.role-nav-logo-img {
+  @apply h-10 w-auto max-w-[110px] shrink-0 sm:h-[52px];
 }
 
 .role-nav-logo-icon {
@@ -29,11 +33,11 @@
 }
 
 .role-nav-links {
-  @apply flex items-center gap-1;
+  @apply flex shrink-0 items-center gap-0.5 sm:gap-1;
 }
 
 .role-nav-link {
-  @apply flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors;
+  @apply flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors sm:px-3;
 }
 
 .role-nav-link-active {

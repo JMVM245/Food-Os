@@ -43,11 +43,11 @@
 }
 
 .vendedor-list-header {
-  @apply mb-6 flex items-center justify-between;
+  @apply mb-6 flex flex-wrap items-center justify-between gap-3;
 }
 
 .vendedor-list-info {
-  @apply font-mono text-xs uppercase tracking-[0.2em] text-accent;
+  @apply truncate font-mono text-xs uppercase tracking-[0.2em] text-accent;
 }
 
 .vendedor-list-title {
@@ -115,5 +115,5 @@
 }
 
 .vendedor-card-footer {
-  @apply flex items-center justify-between;
+  @apply flex flex-wrap items-center justify-between gap-2;
 }

@@ -22,7 +22,7 @@
 }
 
 .product-card-name {
-  @apply font-display text-base font-bold uppercase leading-tight tracking-wide;
+  @apply truncate font-display text-base font-bold uppercase leading-tight tracking-wide;
 }
 
 .product-card-price {

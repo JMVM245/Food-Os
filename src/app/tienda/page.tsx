@@ -384,8 +384,8 @@ function PaymentQRModal({
           <div className="tienda-qr-items">
             {carrito.map((item) => (
               <div key={item.productoId} className="tienda-qr-item">
-                <span>{item.emoji} {item.nombre} ×{item.cantidad}</span>
-                <span className="font-mono">{formatoCOP.format(item.precio * item.cantidad)}</span>
+                <span className="tienda-qr-item-name">{item.emoji} {item.nombre} ×{item.cantidad}</span>
+                <span className="font-mono shrink-0">{formatoCOP.format(item.precio * item.cantidad)}</span>
               </div>
             ))}
           </div>

@@ -185,9 +185,9 @@ export default function SeguimientoPage() {
             </div>
             {(editando ? editItems : pedido.items).map((item, idx) => (
               <div key={item.productoId + (item.variante?.id ?? "") + idx} className="seguimiento-item">
-                <span className="flex flex-col min-w-0">
-                  <span>{item.emoji} {item.cantidad}x {item.nombre}</span>
-                  {item.variante && <span className="text-[11px] text-muted-foreground">{item.variante.nombre}</span>}
+                <span className="seguimiento-item-name">
+                  <span className="block truncate">{item.emoji} {item.cantidad}x {item.nombre}</span>
+                  {item.variante && <span className="block text-[11px] text-muted-foreground">{item.variante.nombre}</span>}
                 </span>
                 <span className="seguimiento-item-price shrink-0">
                   {formatoCOP.format(item.precio * item.cantidad)}

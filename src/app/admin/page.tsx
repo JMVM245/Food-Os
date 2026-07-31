@@ -505,7 +505,7 @@ export default function AdminPage() {
                       if (editId === m.id_materia_prima) {
                         return (
                           <TableRow key={m.id_materia_prima}>
-                            <TableCell colSpan={10} className="p-3">
+                            <TableCell colSpan={9} className="p-3">
                               <div className="rounded-md border border-border bg-card p-3 space-y-2">
                                 <p className="text-xs font-semibold uppercase text-muted-foreground">Editando: {m.nombre}</p>
                                 <div className="grid grid-cols-2 gap-2">
@@ -754,7 +754,7 @@ export default function AdminPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-4">
             <button
               onClick={() => setZonaFiltro(null)}
               className={`flex-1 rounded-md px-3 py-2 text-xs font-bold uppercase tracking-wide transition-colors ${

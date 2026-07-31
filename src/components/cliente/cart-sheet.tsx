@@ -145,7 +145,7 @@ export function CartSheet() {
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   ¿Cómo quieres recibirlo?
                 </p>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {opcionesEntrega.map((op) => {
                     const Icon = op.icon;
                     const activo = tipoEntrega === op.value;
@@ -159,8 +159,8 @@ export function CartSheet() {
                             : "bg-secondary text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        <Icon className="h-4 w-4" />
-                        {op.label}
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <span className="truncate">{op.label}</span>
                       </button>
                     );
                   })}
@@ -172,7 +172,7 @@ export function CartSheet() {
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     ¿En qué tienda recoges?
                   </p>
-                  <div className="flex gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:flex">
                     {TIENDAS.map((t) => {
                       const activa = tiendaActiva === t;
                       return (
@@ -185,8 +185,8 @@ export function CartSheet() {
                               : "bg-secondary text-muted-foreground hover:text-foreground"
                           }`}
                         >
-                          <Store className="h-4 w-4" />
-                          Tienda {t}
+                          <Store className="h-4 w-4 shrink-0" />
+                          <span className="truncate">Tienda {t}</span>
                         </button>
                       );
                     })}

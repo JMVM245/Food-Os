@@ -19,7 +19,7 @@
 }
 
 .tienda-login-grid {
-  @apply grid grid-cols-2 gap-4;
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
 }
 
 .tienda-list-main {
@@ -91,7 +91,7 @@
 }
 
 .tienda-card-footer {
-  @apply flex items-center justify-between;
+  @apply flex flex-wrap items-center justify-between gap-2;
 }
 
 .tienda-pos-grid {
@@ -124,11 +124,12 @@
 
 /* QR Payment Modal */
 .tienda-qr-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4;
+  @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/70 p-4;
 }
 
 .tienda-qr-modal {
   @apply relative flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-card p-5 shadow-2xl;
+  max-height: 92vh;
 }
 
 .tienda-qr-close {
@@ -148,19 +149,20 @@
 }
 
 .tienda-qr-body {
-  @apply flex flex-col items-center gap-3;
+  @apply flex flex-col items-center gap-3 overflow-y-auto;
+  min-height: 0;
 }
 
 .tienda-qr-code {
-  @apply flex items-center justify-center rounded-xl border border-border bg-white p-3;
+  @apply flex shrink-0 items-center justify-center rounded-xl border border-border bg-white p-3;
 }
 
 .tienda-qr-img {
-  @apply h-48 w-48;
+  @apply h-40 w-40 sm:h-48 sm:w-48;
 }
 
 .tienda-qr-loading {
-  @apply flex h-48 w-48 items-center justify-center text-xs text-muted-foreground;
+  @apply flex h-40 w-40 items-center justify-center text-xs text-muted-foreground sm:h-48 sm:w-48;
 }
 
 .tienda-qr-items {
@@ -168,18 +170,22 @@
 }
 
 .tienda-qr-item {
-  @apply flex items-center justify-between;
+  @apply flex items-center justify-between gap-2;
+}
+
+.tienda-qr-item-name {
+  @apply min-w-0 truncate;
 }
 
 .tienda-qr-total {
-  @apply flex w-full items-center justify-between text-sm font-semibold;
+  @apply flex w-full shrink-0 items-center justify-between text-sm font-semibold;
 }
 
 .tienda-qr-ref {
-  @apply text-[10px] text-muted-foreground;
+  @apply shrink-0 text-[10px] text-muted-foreground;
 }
 
 .tienda-qr-actions {
-  @apply flex items-center gap-2;
+  @apply flex shrink-0 items-center gap-2;
 }
 

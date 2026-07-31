@@ -37,8 +37,8 @@ export function RoleNav() {
     <nav className={cn("role-nav", oculto && "role-nav-hidden")}>
       <div className="role-nav-inner">
         <Link href="/" className="role-nav-logo">
-          <img src="/img/FoodOs.png" alt="FoodOS" className="h-[60px] w-auto" />
-          <span className="role-nav-logo-text ml-1.5">
+          <img src="/img/FoodOs.png" alt="FoodOS" className="role-nav-logo-img" />
+          <span className="role-nav-logo-text ml-1.5 hidden sm:inline">
             <span className="role-nav-logo-accent">FOOD</span> OS
           </span>
         </Link>

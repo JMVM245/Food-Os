@@ -75,7 +75,7 @@ function LoginPunto({ onSelect }: { onSelect: (p: PuntoRecoleccion) => void }) {
         </p>
       </div>
 
-      <div className="flex justify-center gap-2 mb-6">
+      <div className="flex flex-wrap justify-center gap-2 mb-6 px-1">
         <Button
           size="sm"
           variant={zonaFilter === null ? "default" : "ghost"}
@@ -274,7 +274,7 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
                   <span className="vendedor-card-total">
                     {formatoCOP.format(pedido.total)}
                   </span>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap justify-end gap-1.5">
                     {pedido.estado === "en_camino" && (
                       <Button size="sm" variant="default" className="h-8 text-xs" onClick={() => notificarCliente(pedido.id)}>
                         <CheckCircle2 className="h-3.5 w-3.5" />
