@@ -345,7 +345,7 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                     <>
                       <ShieldCheck className="h-4 w-4 shrink-0" />
                       <span>
-                        <span className="block font-bold uppercase">PAGADO por anticipado</span>
+                        <span className="block font-bold uppercase">PAGADO</span>
                         <span className="block text-[11px]">Ya puedes preparar el pedido.</span>
                       </span>
                     </>

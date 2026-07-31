@@ -382,7 +382,7 @@ function PagoObligatorioModal({
             </div>
             <h2 className="font-display text-xl font-black uppercase text-pitch-bright">¡Pago exitoso!</h2>
             <p className="text-sm text-muted-foreground text-center">
-              Tu pedido quedó pagado por anticipado.
+              Tu pedido quedó pagado.
             </p>
             <p className="text-xs text-muted-foreground font-mono">
               Ref: {ref}

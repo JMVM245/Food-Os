@@ -59,10 +59,16 @@ export default function SeguimientoPage() {
   const cancelable = pedido.estado === "en_camino" || pedido.estado === "preparando";
   const totalMs = pedido.tiempoEstimadoMin * 60_000;
   const elapsedMs = ahora - pedido.creadoEn;
-  const progreso = entregado ? 100 : Math.min(96, (elapsedMs / totalMs) * 100);
+  const progreso = entregado
+    ? 100
+    : pedido.pagado
+      ? Math.min(96, (elapsedMs / totalMs) * 100)
+      : 0;
   const restanteMin = entregado
     ? 0
-    : Math.max(0, Math.ceil((totalMs - elapsedMs) / 60_000));
+    : pedido.pagado
+      ? Math.max(0, Math.ceil((totalMs - elapsedMs) / 60_000))
+      : null;
 
   function handleGuardarEdicion() {
     if (!pedido) return;
@@ -132,7 +138,7 @@ export default function SeguimientoPage() {
             <div className="seguimiento-progress">
               <span>Progreso de entrega</span>
               <span className="seguimiento-progress-time">
-                {entregado ? "Listo" : `Tiempo: ${restanteMin} min`}
+                {entregado ? "Listo" : restanteMin === null ? "Esperando pago" : `Tiempo: ${restanteMin} min`}
               </span>
             </div>
             <Progress value={progreso} />
@@ -209,7 +215,7 @@ export default function SeguimientoPage() {
               <ShieldCheck className="h-4 w-4" />
               <div>
                 <p className="seguimiento-pagado-title">PAGADO</p>
-                <p className="seguimiento-pagado-desc">Pagaste por anticipado. Solo recibe tu pedido.</p>
+                <p className="seguimiento-pagado-desc">Pagado. Solo recibe tu pedido.</p>
               </div>
             </div>
           )}
