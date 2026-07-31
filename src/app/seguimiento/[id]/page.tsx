@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { EncuestaSatisfaccion } from "@/components/encuesta/encuesta-satisfaccion";
-import { CheckCircle2, Truck, Bell, Store, ArrowLeft, RotateCcw, Pencil, X, Minus, Plus, AlertTriangle } from "lucide-react";
+import { CheckCircle2, Truck, Bell, Store, ArrowLeft, RotateCcw, Pencil, X, Minus, Plus } from "lucide-react";
 import { formatoCOP } from "@/components/cliente/product-card";
 import "../seguimiento.css";
 
@@ -20,12 +20,10 @@ export default function SeguimientoPage() {
   const router = useRouter();
   const pedido = useStore((s) => s.pedidos.find((p) => p.id === params.id));
   const addToCart = useStore((s) => s.addToCart);
-  const cancelarPedido = useStore((s) => s.cancelarPedido);
   const updatePedidoItems = useStore((s) => s.updatePedidoItems);
   const marcarEntregado = useStore((s) => s.marcarEntregado);
   const [ahora, setAhora] = useState(() => Date.now());
   const [editando, setEditando] = useState(false);
-  const [confirmCancel, setConfirmCancel] = useState(false);
   const [editItems, setEditItems] = useState<ItemPedido[]>([]);
 
   useEffect(() => {
@@ -65,12 +63,6 @@ export default function SeguimientoPage() {
   const restanteMin = entregado
     ? 0
     : Math.max(0, Math.ceil((totalMs - elapsedMs) / 60_000));
-
-  function handleCancelar() {
-    if (!pedido) return;
-    cancelarPedido(pedido.id);
-    router.push("/");
-  }
 
   function handleGuardarEdicion() {
     if (!pedido) return;
@@ -236,34 +228,8 @@ export default function SeguimientoPage() {
             </>
           )}
 
-          {cancelable && !editando && (
-            <>
-              <Separator />
-              {confirmCancel ? (
-                <div className="flex flex-col gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-3">
-                  <div className="flex items-center gap-2 text-xs text-destructive">
-                    <AlertTriangle className="h-4 w-4 shrink-0" />
-                    <span>¿Cancelar todo el pedido? No se puede deshacer.</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="destructive" className="flex-1 h-8 text-xs" onClick={handleCancelar}>
-                      Sí, cancelar
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1 h-8 text-xs" onClick={() => setConfirmCancel(false)}>
-                      Volver
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <Button variant="outline" size="sm" className="w-full text-destructive border-destructive/50 hover:bg-destructive/10" onClick={() => setConfirmCancel(true)}>
-                  <X className="h-4 w-4" />
-                  Cancelar pedido
-                </Button>
-              )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
       {entregado && (
         <div className="mt-6 space-y-4">
