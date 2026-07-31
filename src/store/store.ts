@@ -296,7 +296,7 @@ export const useStore = create<StoreState>()(
 
       crearPedido: (horaEntrega?) => {
         const { asiento, carrito, productos, disponiblePorZona, tipoEntrega, franjasOcupadas, tiendaActiva } = get();
-        if (tipoEntrega === "delivery" && (!asiento.tribuna || !asiento.fila || !asiento.silla)) return null;
+        if (tipoEntrega === "delivery" && !asiento.tribuna) return null;
         if (carrito.length === 0) return null;
 
         const zona = tipoEntrega === "delivery" ? asiento.tribuna! : tiendaActiva;
@@ -359,8 +359,8 @@ export const useStore = create<StoreState>()(
           id: generarId(),
           zona,
           tribuna: zona,
-          fila: tipoEntrega === "delivery" ? asiento.fila : "-",
-          silla: tipoEntrega === "delivery" ? asiento.silla : "-",
+          fila: "-",
+          silla: "-",
           codigoBoleta: asiento.codigoBoleta || "",
           items,
           total,

@@ -15,7 +15,7 @@
 }
 
 .seat-selector-grid {
-  @apply grid grid-cols-3 gap-3;
+  @apply grid grid-cols-1 gap-3;
 }
 
 .seat-selector-field {

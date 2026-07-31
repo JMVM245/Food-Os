@@ -852,7 +852,7 @@ export default function AdminPage() {
                     esc(new Date(p.creadoEn).toLocaleString("es-CO")),
                     esc(p.codigoBoleta || ""),
                     esc(p.zona),
-                    esc(p.tipoEntrega === "pickup" ? "Recoger" : `Fila ${p.fila} Silla ${p.silla}`),
+                    esc(p.tipoEntrega === "pickup" ? "Recoger" : p.tribuna),
                     esc(p.codigoBoleta || ""),
                     esc(i.nombre),
                     esc(i.cantidad),
@@ -932,7 +932,7 @@ export default function AdminPage() {
                         <TableCell className="text-xs">{pedido.codigoBoleta || "—"}</TableCell>
                         <TableCell className="text-xs">{pedido.zona}</TableCell>
                         <TableCell className="text-xs whitespace-nowrap">
-                          {pedido.tipoEntrega === "pickup" ? "Recoger en tienda" : `Fila ${pedido.fila} · Silla ${pedido.silla}`}
+                          {pedido.tipoEntrega === "pickup" ? "Recoger en tienda" : pedido.tribuna}
                         </TableCell>
                         <TableCell className="text-xs font-mono">{pedido.codigoBoleta || "—"}</TableCell>
                         <TableCell className="text-xs">

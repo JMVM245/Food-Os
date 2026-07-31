@@ -155,7 +155,7 @@ export default function SeguimientoPage() {
             <p className="seguimiento-direccion">
               {pedido.tipoEntrega === "pickup"
                 ? `Punto de venta · Zona ${pedido.tribuna}`
-                : `${pedido.tribuna} · Fila ${pedido.fila} · Silla ${pedido.silla}`}
+                : pedido.tribuna}
             </p>
             {pedido.codigoBoleta && (
               <p className="text-[11px] text-muted-foreground mt-0.5">Código boleta: {pedido.codigoBoleta}</p>

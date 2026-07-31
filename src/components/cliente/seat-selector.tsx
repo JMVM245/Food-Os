@@ -37,26 +37,6 @@ export function SeatSelector() {
             </SelectContent>
           </Select>
         </div>
-        <div className="seat-selector-field">
-          <Label htmlFor="fila">Fila</Label>
-          <Input
-            id="fila"
-            inputMode="numeric"
-            placeholder="Ej. 14"
-            value={asiento.fila}
-            onChange={(e) => setAsiento({ fila: e.target.value })}
-          />
-        </div>
-        <div className="seat-selector-field">
-          <Label htmlFor="silla">Silla</Label>
-          <Input
-            id="silla"
-            inputMode="numeric"
-            placeholder="Ej. 22"
-            value={asiento.silla}
-            onChange={(e) => setAsiento({ silla: e.target.value })}
-          />
-        </div>
       </div>
       <div className="seat-selector-field mt-3">
         <Label htmlFor="codigoBoleta">Código de boleta</Label>
@@ -67,11 +47,11 @@ export function SeatSelector() {
           onChange={(e) => setAsiento({ codigoBoleta: e.target.value })}
         />
       </div>
-      {asiento.tribuna && asiento.fila && asiento.silla && (
+      {asiento.tribuna && (
         <p className="seat-selector-confirm">
           Entregaremos en{" "}
           <span className="seat-selector-location">
-            {asiento.tribuna} · Fila {asiento.fila} · Silla {asiento.silla}
+            {asiento.tribuna}
           </span>
         </p>
       )}

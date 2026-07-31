@@ -73,7 +73,7 @@ export function CartSheet() {
   };
 
   const total = items.reduce((acc, i) => acc + precioEfectivo(i) * i.cantidad, 0);
-  const asientoCompleto = Boolean(asiento.tribuna && asiento.fila && asiento.silla);
+  const asientoCompleto = Boolean(asiento.tribuna);
 
   const zona = tipoEntrega === "delivery" ? asiento.tribuna : null;
 
@@ -127,8 +127,8 @@ export function CartSheet() {
           <SheetDescription>
             {tipoEntrega === "delivery"
               ? asientoCompleto
-                ? `Se entrega en ${asiento.tribuna} · Fila ${asiento.fila} · Silla ${asiento.silla}`
-                : "Selecciona tu asiento para recibir el pedido."
+                ? `Se entrega en ${asiento.tribuna}`
+                : "Selecciona tu ubicación para recibir el pedido."
               : `Recoge en Tienda ${tiendaActiva}.`}
           </SheetDescription>
         </SheetHeader>

@@ -237,7 +237,7 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
                     <span>
                       {pedido.tipoEntrega === "pickup"
                         ? "Recoger en tienda"
-                        : `Fila ${pedido.fila} · Silla ${pedido.silla}`}
+                        : `${pedido.tribuna}`}
                     </span>
                     {pedido.codigoBoleta && (
                       <span className="text-[10px] font-normal text-muted-foreground">
@@ -302,7 +302,7 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
                     <div className="grid h-44 w-44 place-items-center rounded-lg bg-white p-2">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=FOODOS:${pedido.total}:${pedido.tribuna}-F${pedido.fila}-S${pedido.silla}`}
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=FOODOS:${pedido.total}:${pedido.tribuna}`}
                         alt="QR de cobro"
                         className="h-full w-full"
                       />

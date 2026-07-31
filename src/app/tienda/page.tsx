@@ -272,7 +272,7 @@ function DashboardTienda({ tienda, onSalir }: { tienda: Tienda; onSalir: () => v
                   ) : (
                     <Package className="h-4 w-4 text-sky-400" />
                   )}
-                  <span>{pedido.tipoEntrega === "pickup" ? "Recoger en tienda" : `Delivery · Fila ${pedido.fila} · Silla ${pedido.silla}`}</span>
+                  <span>{pedido.tipoEntrega === "pickup" ? "Recoger en tienda" : `Delivery · ${pedido.tribuna}`}</span>
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
