@@ -15,8 +15,6 @@ import {
   LogOut,
   Armchair,
   MapPin,
-  Users,
-  ChevronRight,
   Clock,
   ShoppingBag,
   ShieldCheck,
@@ -32,121 +30,202 @@ const ZONA_COLORS: Record<Zona, { bg: string; border: string; text: string; badg
 };
 
 export default function VendedorPage() {
-  const puntoActivo = useStore((s) => s.puntoActivo);
-  const setPuntoActivo = useStore((s) => s.setPuntoActivo);
+  const sesion = useStore((s) => s.repartidorSesion);
+  const logoutRepartidor = useStore((s) => s.logoutRepartidor);
+  const puntos = useStore((s) => s.puntosRecoleccion);
 
-  if (!puntoActivo) {
-    return <LoginPunto onSelect={setPuntoActivo} />;
+  if (!sesion) {
+    return <AuthRepartidor />;
+  }
+
+  const punto = puntos.find((p) => p.id === sesion.puntoId);
+  if (!punto) {
+    return <AuthRepartidor />;
   }
 
   return (
     <ListaPedidos
-      zona={puntoActivo.zona}
-      punto={puntoActivo}
-      onSalir={() => setPuntoActivo(null)}
+      zona={punto.zona}
+      punto={punto}
+      repartidor={{ nombre: sesion.nombre, codigo: sesion.codigo }}
+      onSalir={logoutRepartidor}
     />
   );
 }
 
-function LoginPunto({ onSelect }: { onSelect: (p: PuntoRecoleccion) => void }) {
+function AuthRepartidor() {
+  const registrarRepartidor = useStore((s) => s.registrarRepartidor);
+  const loginRepartidor = useStore((s) => s.loginRepartidor);
   const puntos = useStore((s) => s.puntosRecoleccion);
-  const pedidos = useStore((s) => s.pedidos);
-  const [zonaFilter, setZonaFilter] = useState<Zona | null>(null);
+  const [modo, setModo] = useState<"registrar" | "ingresar">("registrar");
+  const [zona, setZona] = useState<Zona | null>(null);
+  const [puntoId, setPuntoId] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [codigo, setCodigo] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [error, setError] = useState("");
 
-  const zonasAMostrar: Zona[] = zonaFilter ? [zonaFilter] : ZONAS;
+  const puntosDeZona = zona ? puntos.filter((p) => p.zona === zona) : [];
 
-  const pendientesPorZona = useMemo(() => {
-    const m = new Map<Zona, number>();
-    for (const z of ZONAS) m.set(z, pedidos.filter((p) => p.zona === z && (p.estado === "reclamo" || p.estado === "en_camino" || p.estado === "notificado") && p.tipoEntrega === "delivery").length);
-    return m;
-  }, [pedidos]);
+  function handleRegistrar() {
+    if (!puntoId) return setError("Selecciona tu punto de recolección.");
+    if (!nombre.trim()) return setError("Escribe tu nombre.");
+    if (password.length < 4) return setError("La contraseña debe tener al menos 4 caracteres.");
+    if (password !== confirmar) return setError("Las contraseñas no coinciden.");
+    const punto = puntos.find((p) => p.id === puntoId);
+    if (!punto) return setError("Punto no encontrado.");
+    const res = registrarRepartidor({ nombre: nombre.trim(), password, puntoId, zona: punto.zona });
+    if (!res.ok) return setError(res.error ?? "No se pudo registrar.");
+  }
+
+  function handleIngresar() {
+    if (!codigo.trim()) return setError("Escribe el código de tu punto.");
+    if (!password) return setError("Escribe tu contraseña.");
+    const res = loginRepartidor(codigo.trim(), password);
+    if (!res.ok) return setError(res.error ?? "No se pudo iniciar sesión.");
+  }
 
   return (
     <main className="vendedor-login-main">
       <div className="vendedor-login-header">
         <div className="flex items-center justify-center gap-2 mb-2">
           <MapPin className="h-4 w-4 text-accent" />
-          <p className="vendedor-login-badge">Acceso Punto de Recolección</p>
+          <p className="vendedor-login-badge">Acceso Repartidor</p>
         </div>
-        <h1 className="vendedor-login-title">Selecciona tu punto</h1>
+        <h1 className="vendedor-login-title">
+          {modo === "registrar" ? "Regístrate como repartidor" : "Ingresa a tu punto"}
+        </h1>
         <p className="vendedor-login-desc">
-          Elige el punto de recolección donde estás ubicado para gestionar los pedidos.
+          Debes registrarte e iniciar sesión para reclamar y entregar pedidos.
         </p>
       </div>
 
       <div className="flex flex-wrap justify-center gap-2 mb-6 px-1">
-        <Button
-          size="sm"
-          variant={zonaFilter === null ? "default" : "ghost"}
-          onClick={() => setZonaFilter(null)}
-          className="h-8 text-xs"
-        >
-          Todas
+        <Button size="sm" variant={modo === "registrar" ? "default" : "ghost"} className="h-8 text-xs" onClick={() => { setModo("registrar"); setError(""); }}>
+          Registrar
         </Button>
-        {ZONAS.map((z) => (
-          <Button
-            key={z}
-            size="sm"
-            variant={zonaFilter === z ? "default" : "ghost"}
-            onClick={() => setZonaFilter(z)}
-            className={`h-8 text-xs ${zonaFilter === z ? "" : ZONA_COLORS[z].text}`}
-          >
-            {z}
-          </Button>
-        ))}
+        <Button size="sm" variant={modo === "ingresar" ? "default" : "ghost"} className="h-8 text-xs" onClick={() => { setModo("ingresar"); setError(""); }}>
+          Ya tengo cuenta
+        </Button>
       </div>
 
+      {error && (
+        <div className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+          {error}
+        </div>
+      )}
+
       <div className="vendedor-login-list">
-        {zonasAMostrar.map((z) => {
-          const deEstaZona = puntos.filter((p) => p.zona === z);
-          const pendientes = pendientesPorZona.get(z) ?? 0;
-          const color = ZONA_COLORS[z];
-          return (
-            <div key={z}>
-              <div className={`flex items-center justify-between rounded-lg px-4 py-2 mb-2 ${color.bg} ${color.border} border`}>
-                <div className="flex items-center gap-2">
-                  <Users className={`h-4 w-4 ${color.text}`} />
-                  <span className={`font-bold text-sm ${color.text}`}>Zona {z}</span>
-                  <span className="text-xs text-muted-foreground">· {deEstaZona.length} puntos</span>
-                </div>
-                {pendientes > 0 && (
-                  <Badge variant="warning" className="text-[10px] h-5">
-                    {pendientes} pendiente{pendientes !== 1 ? "s" : ""}
-                  </Badge>
-                )}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                {deEstaZona.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => onSelect(p)}
-                    className={`vendedor-login-btn ${color.border}`}
+        {modo === "registrar" ? (
+          <>
+            <div>
+              <p className="vendedor-auth-label">1. Elige tu zona</p>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {ZONAS.map((z) => (
+                  <Button
+                    key={z}
+                    size="sm"
+                    variant={zona === z ? "default" : "ghost"}
+                    className={`h-8 text-xs ${zona === z ? "" : ZONA_COLORS[z].text}`}
+                    onClick={() => { setZona(z); setPuntoId(""); }}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className={`vendedor-login-icon ${color.bg}`}>
-                        <MapPin className={`h-5 w-5 ${color.text}`} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="vendedor-login-zona truncate">{p.nombre}</p>
-                        <p className="vendedor-login-vendedor truncate">
-                          <span className="font-mono">{p.codigo}</span>
-                          <span className="mx-1.5">·</span>
-                          {p.encargado}
-                        </p>
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
-                  </button>
+                    {z}
+                  </Button>
                 ))}
               </div>
             </div>
-          );
-        })}
+
+            {zona && (
+              <div>
+                <p className="vendedor-auth-label">2. Elige tu punto</p>
+                <div className="vendedor-auth-puntos mt-1">
+                  {puntosDeZona.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setPuntoId(p.id)}
+                      className={`vendedor-auth-punto ${puntoId === p.id ? "vendedor-auth-punto-activo" : ""}`}
+                    >
+                      <span className="font-mono text-xs">{p.codigo}</span>
+                      <span className="truncate">{p.nombre}</span>
+                      <span className="text-[10px] text-muted-foreground">{p.encargado}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <div>
+                <p className="vendedor-auth-label">Tu nombre</p>
+                <input
+                  className="vendedor-auth-input"
+                  placeholder="Ej: Carlos Pérez"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                />
+              </div>
+              <div>
+                <p className="vendedor-auth-label">Contraseña</p>
+                <input
+                  type="password"
+                  className="vendedor-auth-input"
+                  placeholder="Mínimo 4 caracteres"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <div>
+                <p className="vendedor-auth-label">Confirmar contraseña</p>
+                <input
+                  type="password"
+                  className="vendedor-auth-input"
+                  placeholder="Repite la contraseña"
+                  value={confirmar}
+                  onChange={(e) => setConfirmar(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <Button className="w-full h-10" onClick={handleRegistrar}>
+              <Hand className="h-4 w-4" /> Crear cuenta y entrar
+            </Button>
+          </>
+        ) : (
+          <>
+            <div className="space-y-2">
+              <div>
+                <p className="vendedor-auth-label">Código de punto</p>
+                <input
+                  className="vendedor-auth-input font-mono"
+                  placeholder="Ej: N-P01"
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value)}
+                />
+              </div>
+              <div>
+                <p className="vendedor-auth-label">Contraseña</p>
+                <input
+                  type="password"
+                  className="vendedor-auth-input"
+                  placeholder="Tu contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <Button className="w-full h-10" onClick={handleIngresar}>
+              <CheckCircle2 className="h-4 w-4" /> Iniciar sesión
+            </Button>
+          </>
+        )}
       </div>
     </main>
   );
 }
-function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecoleccion; onSalir: () => void }) {
+
+function ListaPedidos({ zona, punto, repartidor, onSalir }: { zona: Zona; punto: PuntoRecoleccion; repartidor: { nombre: string; codigo: string }; onSalir: () => void }) {
   const pedidos = useStore((s) => s.pedidos);
   const marcarEntregado = useStore((s) => s.marcarEntregado);
   const notificarCliente = useStore((s) => s.notificarCliente);
@@ -179,7 +258,7 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
   const color = ZONA_COLORS[zona];
 
   function handleReclamar(pedidoId: string) {
-    const ok = reclamarPedido(pedidoId, { nombre: punto.encargado, codigo: punto.codigo });
+    const ok = reclamarPedido(pedidoId, { nombre: repartidor.nombre, codigo: repartidor.codigo });
     if (!ok) {
       setMensaje("Otro repartidor se llevó este pedido.");
       window.setTimeout(() => setMensaje(null), 3000);
@@ -196,12 +275,12 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
           <div className="min-w-0">
             <p className="vendedor-list-info">{punto.nombre} · <span className="font-mono">{punto.codigo}</span></p>
             <h1 className="vendedor-list-title">Zona {zona}</h1>
-            <p className="text-[11px] text-muted-foreground mt-0.5">{punto.encargado}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">{repartidor.nombre}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" className="h-8 text-xs" onClick={onSalir}>
-            <LogOut className="h-3.5 w-3.5" /> Cambiar punto
+            <LogOut className="h-3.5 w-3.5" /> Cerrar sesión
           </Button>
         </div>
       </header>
