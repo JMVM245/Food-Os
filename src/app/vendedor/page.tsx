@@ -15,8 +15,6 @@ import {
   LogOut,
   Armchair,
   Store,
-  QrCode,
-  X,
   MapPin,
   Users,
   ChevronRight,
@@ -153,7 +151,6 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
   const pedidos = useStore((s) => s.pedidos);
   const marcarEntregado = useStore((s) => s.marcarEntregado);
   const notificarCliente = useStore((s) => s.notificarCliente);
-  const [qrPedidoId, setQrPedidoId] = useState<string | null>(null);
 
   const pendientes = useMemo(
     () =>
@@ -287,39 +284,12 @@ function ListaPedidos({ zona, punto, onSalir }: { zona: Zona; punto: PuntoRecole
                         Llegué a la zona
                       </Button>
                     )}
-                    {!pedido.pagado && (
-                      <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => setQrPedidoId(qrPedidoId === pedido.id ? null : pedido.id)}>
-                        <QrCode className="h-3.5 w-3.5" />
-                        QR
-                      </Button>
-                    )}
                     <Button size="sm" variant="pitch" className="h-8 text-xs" onClick={() => marcarEntregado(pedido.id)}>
                       <CheckCircle2 className="h-3.5 w-3.5" />
                       Entregar
                     </Button>
                   </div>
                 </div>
-                {qrPedidoId === pedido.id && (
-                  <div className="mt-3 flex flex-col items-center gap-2 rounded-md border border-border bg-card p-4">
-                    <div className="flex w-full items-center justify-between">
-                      <p className="text-xs font-semibold uppercase text-muted-foreground">Cobro QR — #{pedido.id}</p>
-                      <button onClick={() => setQrPedidoId(null)} className="text-muted-foreground hover:text-foreground">
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                    <div className="grid h-44 w-44 place-items-center rounded-lg bg-white p-2">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=FOODOS:${pedido.total}:${pedido.tribuna}`}
-                        alt="QR de cobro"
-                        className="h-full w-full"
-                      />
-                    </div>
-                    <p className="text-center text-xs text-muted-foreground">
-                      Muestra este código al cliente para cobrar <span className="font-bold text-gold">{formatoCOP.format(pedido.total)}</span>
-                    </p>
-                  </div>
-                )}
               </CardContent>
             </Card>
           ))}

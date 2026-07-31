@@ -128,7 +128,6 @@ interface StoreState {
   marcarListo: (pedidoId: string) => void;
   notificarCliente: (pedidoId: string) => void;
   marcarEntregado: (pedidoId: string) => void;
-  marcarPagado: (pedidoId: string) => void;
   setSatisfaccion: (pedidoId: string, s: NonNullable<Pedido["satisfaccion"]>) => void;
 
   ingresoVendedor: { activo: boolean; horaInicio: string | null };
@@ -370,7 +369,7 @@ export const useStore = create<StoreState>()(
           items,
           total,
           estado: "preparando",
-          pagado: false,
+          pagado: true,
           tipoEntrega,
           vendedor,
           creadoEn: Date.now(),
@@ -468,13 +467,6 @@ export const useStore = create<StoreState>()(
 
           return { productos, pedidos };
         }),
-
-      marcarPagado: (pedidoId) =>
-        set((s) => ({
-          pedidos: s.pedidos.map((p) =>
-            p.id === pedidoId ? { ...p, pagado: true } : p
-          ),
-        })),
 
       cancelarPedido: (pedidoId) =>
         set((s) => {

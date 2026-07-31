@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useStore, type TipoEntrega, type ItemCarrito, HORAS_DEL_DIA, MAX_PEDIDOS_POR_FRANJA } from "@/store/store";
 import {
@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Minus, Plus, Trash2, Armchair, Store, Clock, Users, Zap } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, Armchair, Store, Clock, Users, Zap, CreditCard, CheckCircle2, X } from "lucide-react";
 import { COMBOS_INICIALES, TIENDAS } from "@/lib/data";
 import { formatoCOP } from "./product-card";
 import "./cart-sheet.css";
@@ -23,6 +23,7 @@ import "./cart-sheet.css";
 export function CartSheet() {
   const [open, setOpen] = useState(false);
   const [pagando, setPagando] = useState(false);
+  const [mostrarPago, setMostrarPago] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [horaSeleccionada, setHoraSeleccionada] = useState<string | null>(null);
   const router = useRouter();
@@ -87,6 +88,10 @@ export function CartSheet() {
       setError("Selecciona una hora de entrega.");
       return;
     }
+    setMostrarPago(true);
+  }
+
+  function crearPedidoDespuesDePagar() {
     setPagando(true);
     const pedidoId = crearPedido(tipoEntrega === "delivery" ? horaSeleccionada! : undefined);
     setPagando(false);
@@ -94,9 +99,11 @@ export function CartSheet() {
       setError(tipoEntrega === "delivery" && horaSeleccionada
         ? "Esta franja horaria se llenó. Elige otra hora."
         : "No hay stock suficiente para uno de tus productos. Ajusta las cantidades.");
+      setMostrarPago(false);
       return;
     }
     setOpen(false);
+    setMostrarPago(false);
     router.push(`/seguimiento/${pedidoId}`);
   }
 
@@ -319,10 +326,135 @@ export function CartSheet() {
             onClick={handlePagar}
           >
             <ShoppingCart className="h-4 w-4" />
-            {pagando ? "Procesando…" : "Confirmar pedido"}
+            {pagando ? "Procesando…" : "Ir a pagar"}
           </Button>
         </SheetFooter>
       </SheetContent>
+
+      {mostrarPago && (
+        <PagoObligatorioModal
+          total={total}
+          items={items.map((i) => ({
+            nombre: i.producto.nombre,
+            emoji: i.producto.emoji,
+            cantidad: i.cantidad,
+            precio: precioEfectivo(i),
+            variante: i.variante?.nombre,
+          }))}
+          onConfirmar={crearPedidoDespuesDePagar}
+          onCerrar={() => setMostrarPago(false)}
+        />
+      )}
     </Sheet>
+  );
+}
+
+function PagoObligatorioModal({
+  total, items, onConfirmar, onCerrar,
+}: {
+  total: number;
+  items: { nombre: string; emoji: string; cantidad: number; precio: number; variante?: string }[];
+  onConfirmar: () => void;
+  onCerrar: () => void;
+}) {
+  const [qrDataUrl, setQrDataUrl] = useState("");
+  const [pagado, setPagado] = useState(false);
+  const ref = useRef(`CLIENTE-${Date.now().toString(36).toUpperCase()}`).current;
+
+  useEffect(() => {
+    import("qrcode").then((mod) => {
+      mod.default.toDataURL(
+        `fifa-delivery://pago?total=${total}&ref=${ref}`,
+        { width: 240, margin: 2, color: { dark: "#1a1a2e", light: "#ffffff" } },
+        (err, url) => { if (!err) setQrDataUrl(url); }
+      );
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (pagado) {
+    return (
+      <div className="cart-pago-overlay">
+        <div className="cart-pago-modal">
+          <div className="flex flex-col items-center gap-3 py-6">
+            <div className="grid h-16 w-16 place-items-center rounded-full bg-pitch-bright/15">
+              <CheckCircle2 className="h-8 w-8 text-pitch-bright" />
+            </div>
+            <h2 className="font-display text-xl font-black uppercase text-pitch-bright">¡Pago exitoso!</h2>
+            <p className="text-sm text-muted-foreground text-center">
+              Tu pedido quedó pagado por anticipado.
+            </p>
+            <p className="text-xs text-muted-foreground font-mono">
+              Ref: {ref}
+            </p>
+            <Button size="sm" className="mt-2 h-9" onClick={onConfirmar}>
+              Continuar
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cart-pago-overlay">
+      <div className="cart-pago-modal">
+        <button className="cart-pago-close" onClick={onCerrar}>
+          <X className="h-4 w-4" />
+        </button>
+
+        <div className="cart-pago-header">
+          <div className="grid h-10 w-10 place-items-center rounded-lg bg-accent/15">
+            <CreditCard className="h-5 w-5 text-accent" />
+          </div>
+          <div>
+            <p className="cart-pago-label">Pago obligatorio</p>
+            <h2 className="cart-pago-title">Paga para confirmar</h2>
+          </div>
+        </div>
+
+        <div className="cart-pago-body">
+          <div className="cart-pago-code">
+            {qrDataUrl ? (
+              <img src={qrDataUrl} alt="Código QR de pago" className="cart-pago-img" />
+            ) : (
+              <div className="cart-pago-loading">Generando QR...</div>
+            )}
+          </div>
+
+          <div className="cart-pago-items">
+            {items.map((item, idx) => (
+              <div key={idx} className="cart-pago-item">
+                <span className="cart-pago-item-name">
+                  {item.emoji} {item.nombre} ×{item.cantidad}
+                  {item.variante && <span className="block text-[10px] text-muted-foreground">{item.variante}</span>}
+                </span>
+                <span className="font-mono shrink-0">{formatoCOP.format(item.precio * item.cantidad)}</span>
+              </div>
+            ))}
+          </div>
+
+          <Separator />
+
+          <div className="cart-pago-total">
+            <span>Total</span>
+            <span className="font-display font-bold text-gold">{formatoCOP.format(total)}</span>
+          </div>
+
+          <p className="cart-pago-ref">
+            Referencia: <span className="font-mono">{ref}</span>
+          </p>
+        </div>
+
+        <div className="cart-pago-actions">
+          <Button variant="outline" size="sm" className="flex-1 h-9" onClick={onCerrar}>
+            Cancelar
+          </Button>
+          <Button size="sm" className="flex-1 h-9" onClick={() => setPagado(true)}>
+            <CheckCircle2 className="h-3.5 w-3.5" /> Confirmar pago
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

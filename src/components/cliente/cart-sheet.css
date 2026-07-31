@@ -73,3 +73,70 @@
 .cart-total-value {
   @apply text-gold;
 }
+
+/* Pago obligatorio Modal */
+.cart-pago-overlay {
+  @apply fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-black/70 p-4;
+}
+
+.cart-pago-modal {
+  @apply relative flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-card p-5 shadow-2xl;
+  max-height: 92vh;
+}
+
+.cart-pago-close {
+  @apply absolute right-3 top-3 text-muted-foreground hover:text-foreground;
+}
+
+.cart-pago-header {
+  @apply flex items-center gap-3;
+}
+
+.cart-pago-label {
+  @apply font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground;
+}
+
+.cart-pago-title {
+  @apply font-display text-lg font-black uppercase;
+}
+
+.cart-pago-body {
+  @apply flex flex-col items-center gap-3 overflow-y-auto;
+  min-height: 0;
+}
+
+.cart-pago-code {
+  @apply flex shrink-0 items-center justify-center rounded-xl border border-border bg-white p-3;
+}
+
+.cart-pago-img {
+  @apply h-40 w-40 sm:h-48 sm:w-48;
+}
+
+.cart-pago-loading {
+  @apply flex h-40 w-40 items-center justify-center text-xs text-muted-foreground sm:h-48 sm:w-48;
+}
+
+.cart-pago-items {
+  @apply w-full space-y-1 text-xs;
+}
+
+.cart-pago-item {
+  @apply flex items-center justify-between gap-2;
+}
+
+.cart-pago-item-name {
+  @apply min-w-0 truncate;
+}
+
+.cart-pago-total {
+  @apply flex w-full shrink-0 items-center justify-between text-sm font-semibold;
+}
+
+.cart-pago-ref {
+  @apply shrink-0 text-[10px] text-muted-foreground;
+}
+
+.cart-pago-actions {
+  @apply flex shrink-0 items-center gap-2;
+}
